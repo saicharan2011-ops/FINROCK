@@ -13,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from creditsense_ai.logging_utils import emit_stdout_event
+from credit_env import OpenEnvAdapter
 
 # Lazy imports — these may fail if optional deps are missing.
 # We import them inside the functions that use them so the server always boots.
@@ -151,6 +153,15 @@ class _SessionStore:
 
 
 STORE = _SessionStore()
+OPENENV = OpenEnvAdapter()
+
+
+class OpenEnvResetRequest(BaseModel):
+    seed: Optional[int] = None
+
+
+class OpenEnvStepRequest(BaseModel):
+    action: int
 
 
 @app.get("/")
@@ -159,6 +170,38 @@ async def root():
     if index.exists():
         return FileResponse(index)
     return {"message": "CreditSense AI Backend Operational", "status": "online"}
+
+
+@app.post("/reset")
+async def openenv_reset(req: OpenEnvResetRequest | None = None):
+    seed = req.seed if req else None
+    return OPENENV.reset(seed=seed)
+
+
+@app.post("/openenv/reset")
+async def openenv_reset_alias(req: OpenEnvResetRequest | None = None):
+    seed = req.seed if req else None
+    return OPENENV.reset(seed=seed)
+
+
+@app.post("/step")
+async def openenv_step(req: OpenEnvStepRequest):
+    return OPENENV.step(action=req.action)
+
+
+@app.post("/openenv/step")
+async def openenv_step_alias(req: OpenEnvStepRequest):
+    return OPENENV.step(action=req.action)
+
+
+@app.get("/state")
+async def openenv_state():
+    return OPENENV.state()
+
+
+@app.get("/openenv/state")
+async def openenv_state_alias():
+    return OPENENV.state()
 
 
 @app.post("/api/sessions", response_model=CreateSessionResponse)
@@ -282,6 +325,7 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
     sess = STORE.get(session_id)
     state: CreditState = sess["state"]
     docs: Dict[str, Optional[str]] = sess["docs"]
+    emit_stdout_event("START", "PIPELINE", session_id=session_id, company_name=state.company_name)
 
     logger = _try_blockchain_logger()
     blockchain_enabled = bool(logger)
@@ -311,6 +355,7 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
     # Parse GST
     gst_revenue = 0.0
     invoice_graph = None
+    emit_stdout_event("START", "GST_PARSE", session_id=session_id, has_doc=bool(docs.get("gst")))
     if docs.get("gst"):
         await log("DOCUMENT_PARSING", "Parsing GST data…")
         gst_parser = _import_gst_parser()()
@@ -330,9 +375,11 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
                 sess["blockchain"]["txs"].append({"kind": "DOC_HASH", "doc_type": "gst", "tx_hash": tx})
             except Exception:
                 pass
+    emit_stdout_event("STOP", "GST_PARSE", session_id=session_id)
 
     # Parse Bank
     total_inflows = 0.0
+    emit_stdout_event("START", "BANK_PARSE", session_id=session_id, has_doc=bool(docs.get("bank")))
     if docs.get("bank"):
         await log("DOCUMENT_PARSING", "Parsing bank statements…")
         bank_parser = _import_bank_parser()()
@@ -350,6 +397,7 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
                 sess["blockchain"]["txs"].append({"kind": "DOC_HASH", "doc_type": "bank", "tx_hash": tx})
             except Exception:
                 pass
+    emit_stdout_event("STOP", "BANK_PARSE", session_id=session_id)
 
     # Revenue mismatch flag
     try:
@@ -363,6 +411,7 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
 
     # Circular trading detection
     circular_score = 0.0
+    emit_stdout_event("START", "CIRCULAR_TRADING", session_id=session_id, has_graph=bool(invoice_graph is not None))
     if invoice_graph is not None:
         await log("GRAPH_ANALYTICS", "Running circular trading detector…")
         detector = _import_circular_detector()()
@@ -373,6 +422,7 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
         gauges["circular"] = int(min(100, circular_score * 100))
         await metrics("Circular trading analyzed.", 65, ratios, gauges)
         await asyncio.sleep(0.15)
+    emit_stdout_event("STOP", "CIRCULAR_TRADING", session_id=session_id, score=round(circular_score, 4))
 
     # Litigation risk from PDF (annual/itr/mca if any pdf)
     litigation = float(state.risk_signals.litigation_risk or 0.0)
@@ -392,6 +442,7 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
         await asyncio.sleep(0.15)
 
     # LLM Research Agent (news / MCA / promoter / fraud signals)
+    emit_stdout_event("START", "RESEARCH_AGENT", session_id=session_id, company_name=state.company_name)
     await log("RESEARCH_AGENT", "Running autonomous research agent…")
     promoter_breakdown = None
     try:
@@ -447,11 +498,13 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
         )
         await metrics("Research agent complete.", 88, ratios, gauges)
         await asyncio.sleep(0.15)
+        emit_stdout_event("STOP", "RESEARCH_AGENT", session_id=session_id, status="ok")
     except Exception as e:
         # Safe fallback — keep pipeline working
         await log("RESEARCH_AGENT", f"Research agent unavailable (fallback). {e}")
         await metrics("Research agent skipped.", 85, ratios, gauges)
         await asyncio.sleep(0.1)
+        emit_stdout_event("STOP", "RESEARCH_AGENT", session_id=session_id, status="fallback", reason=str(e))
 
     # Decision + CAM
     await log("FINAL_VERDICT", "Generating CAM memo…")
@@ -485,6 +538,14 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
     )
     sess["state"] = state
     sess["results"] = summary.model_dump()
+    emit_stdout_event(
+        "END",
+        "PIPELINE",
+        session_id=session_id,
+        decision=decision,
+        completion=completion,
+        gauges=gauges,
+    )
     return summary
 
 

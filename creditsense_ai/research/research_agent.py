@@ -27,6 +27,7 @@ from typing import Optional
 import requests
 from openai import OpenAI
 from pydantic import BaseModel, Field, field_validator
+from creditsense_ai.logging_utils import emit_stdout_event
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("research_agent")
@@ -578,6 +579,7 @@ class ResearchAgent:
     ) -> ResearchResult:
 
         logger.info(f"[ResearchAgent] 10-year research starting: '{company_name}'")
+        emit_stdout_event("START", "RESEARCH_AGENT", company_name=company_name, loan_amount_cr=loan_amount_cr, sector=sector)
         t0 = time.time()
 
         # ── Phase 1: Execute all 12 searches ──────────────────────────────────
@@ -604,9 +606,11 @@ class ResearchAgent:
 
         # ── Phase 2: Synthesise ────────────────────────────────────────────────
         logger.info(f"[ResearchAgent] Synthesising {n_searches} search results...")
+        emit_stdout_event("STOP", "RESEARCH_SEARCH", company_name=company_name, searches=n_searches)
         result_dict = _synthesise(company_name, all_results, n_searches, loan_amount_cr, sector)
 
         if not result_dict:
+            emit_stdout_event("END", "RESEARCH_AGENT", company_name=company_name, status="fallback", reason="Synthesis returned empty")
             return self._fallback(company_name, "Synthesis returned empty")
 
         # Force-set mandatory fields
@@ -626,9 +630,22 @@ class ResearchAgent:
                 f"conf={result.confidence:.2f} | "
                 f"searches={n_searches}"
             )
+            emit_stdout_event(
+                "END",
+                "RESEARCH_AGENT",
+                company_name=company_name,
+                status="ok",
+                elapsed_s=round(elapsed, 3),
+                overall_risk=result.overall_risk,
+                litigation_risk=result.litigation_risk,
+                promoter_risk=result.promoter_risk,
+                confidence=result.confidence,
+                searches=n_searches,
+            )
             return result
         except Exception as e:
             logger.error(f"[ResearchAgent] Validation error: {e}")
+            emit_stdout_event("END", "RESEARCH_AGENT", company_name=company_name, status="fallback", reason=f"Pydantic error: {e}")
             return self._fallback(company_name, f"Pydantic error: {e}")
 
     def search_company_dict(
