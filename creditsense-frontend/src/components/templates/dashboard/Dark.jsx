@@ -53,7 +53,7 @@ const DashboardDark = () => {
             <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-20">
                 <div className="flex justify-between items-center w-full px-8 h-full max-w-[1920px] mx-auto">
                     <div className="flex items-center gap-12">
-                        <span className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">KINETIC VAULT</span>
+                        <span className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">FINROCK</span>
                         <div className="hidden md:flex items-center gap-8 font-headline tracking-tight uppercase text-[10px] tracking-widest font-black">
                             <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/">Markets</Link>
                             <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/live-agent">Analysis</Link>
@@ -62,7 +62,7 @@ const DashboardDark = () => {
                             <button onClick={toggleTheme} className="text-zinc-400 hover:text-primary transition-colors text-xs">Switch Theme</button>
                         </div>
                     </div>
-                    <Link to="/live-agent" className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-full font-bold text-sm tracking-tight hover:scale-105 active:scale-95 transition-all neon-glow">
+                    <Link to="/live-agent?autostart=1" className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-full font-bold text-sm tracking-tight hover:scale-105 active:scale-95 transition-all neon-glow">
                         Run Analysis
                     </Link>
                 </div>
@@ -111,7 +111,7 @@ const DashboardDark = () => {
                 <header className="max-w-6xl mx-auto mb-16">
                     <div className="flex justify-between items-end mb-12">
                         <div>
-                            <h1 className="text-5xl font-headline font-bold tracking-tighter text-on-surface mb-2">CreditSense AI</h1>
+                            <h1 className="text-5xl font-headline font-bold tracking-tighter text-on-surface mb-2">FINROCK</h1>
                             <p className="text-zinc-500 max-w-md">Proprietary risk assessment engine. Upload institutional data to generate an immediate credit score volatility report.</p>
                         </div>
                         <div className="text-right">
@@ -237,13 +237,13 @@ const DashboardDark = () => {
             {/* Site Footer */}
             <footer className="w-full py-12 bg-[#0e0e0e] mt-auto">
                 <div className="max-w-7xl mx-auto px-8 flex justify-between items-center font-['Manrope'] text-[10px] uppercase tracking-[0.1em]">
-                    <span className="text-[#85f1ca] font-bold">KINETIC VAULT</span>
+                    <span className="text-[#85f1ca] font-bold">FINROCK</span>
                     <div className="flex gap-8 text-zinc-600">
                         <a className="hover:text-[#85f1ca] transition-colors" href="#">Privacy Policy</a>
                         <a className="hover:text-[#85f1ca] transition-colors" href="#">Terms of Service</a>
                         <a className="hover:text-[#85f1ca] transition-colors" href="#">Security</a>
                     </div>
-                    <p className="text-zinc-600 font-bold opacity-60">© 2024 KINETIC VAULT. ALL RIGHTS RESERVED.</p>
+                    <p className="text-zinc-600 font-bold opacity-60">© 2024 FINROCK. ALL RIGHTS RESERVED.</p>
                 </div>
             </footer>
         </div>

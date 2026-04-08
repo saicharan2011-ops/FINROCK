@@ -74,17 +74,23 @@ class CAMGenerator:
         # ── Promoter Risk Breakdown (audit trail) ──────────────────────────────
         if promoter_breakdown is not None:
             bd = promoter_breakdown
+            lit_delta = getattr(bd, "delta_litigation", getattr(bd, "litigation_delta", 0.0))
+            kw_delta = getattr(bd, "delta_critical_kw", getattr(bd, "critical_keyword_delta", 0.0))
+            kw_high_delta = getattr(bd, "delta_high_kw", getattr(bd, "high_risk_keyword_delta", 0.0))
+            kw_moderate_delta = getattr(bd, "delta_moderate_kw", getattr(bd, "moderate_keyword_delta", 0.0))
+            fraud_delta = getattr(bd, "delta_fraud_signals", getattr(bd, "fraud_signal_delta", 0.0))
+            gaps_delta = getattr(bd, "delta_research_gaps", getattr(bd, "research_gap_delta", 0.0))
             doc.add_heading('Promoter Risk — Scoring Breakdown', level=3)
             doc.add_paragraph(f"Base Score (LLM × confidence): {bd.base_score:.4f}")
-            doc.add_paragraph(f"Litigation Delta: +{bd.litigation_delta:.4f}")
-            doc.add_paragraph(f"Keyword Delta: +{bd.critical_keyword_delta:.4f}")
-            if bd.high_risk_keyword_delta > 0:
-                doc.add_paragraph(f"  ↳ High-risk keywords: +{bd.high_risk_keyword_delta:.4f}")
-            if bd.moderate_keyword_delta > 0:
-                doc.add_paragraph(f"  ↳ Moderate keywords: +{bd.moderate_keyword_delta:.4f}")
-            doc.add_paragraph(f"Fraud Signal Delta: +{bd.fraud_signal_delta:.4f}")
-            if bd.research_gap_delta > 0:
-                doc.add_paragraph(f"Research Gap Penalty: +{bd.research_gap_delta:.4f}")
+            doc.add_paragraph(f"Litigation Delta: +{lit_delta:.4f}")
+            doc.add_paragraph(f"Keyword Delta: +{kw_delta:.4f}")
+            if kw_high_delta > 0:
+                doc.add_paragraph(f"  ↳ High-risk keywords: +{kw_high_delta:.4f}")
+            if kw_moderate_delta > 0:
+                doc.add_paragraph(f"  ↳ Moderate keywords: +{kw_moderate_delta:.4f}")
+            doc.add_paragraph(f"Fraud Signal Delta: +{fraud_delta:.4f}")
+            if gaps_delta > 0:
+                doc.add_paragraph(f"Research Gap Penalty: +{gaps_delta:.4f}")
             doc.add_paragraph(f"Pre-floor Score: {bd.pre_floor_score:.4f}")
             if bd.applied_floor is not None:
                 doc.add_paragraph(f"Applied Hard Floor: {bd.applied_floor:.2f}")

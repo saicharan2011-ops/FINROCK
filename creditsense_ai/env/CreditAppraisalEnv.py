@@ -101,7 +101,7 @@ class CreditAppraisalEnv(gym.Env):
                 self.audit_logger = CreditAuditLogger()
                 if not hasattr(self.audit_logger, 'log_action_to_blockchain'):
                     self.audit_logger.log_action_to_blockchain = lambda loan_id, action, state_hash: self.audit_logger.log_action(
-                        loan_id, getattr(self.state, "step_count", 0), action, state_hash
+                        loan_id, action, state_hash
                     )
             except Exception as e:
                 print(f"Failed to initialize blockchain logger: {e}", file=sys.stderr)

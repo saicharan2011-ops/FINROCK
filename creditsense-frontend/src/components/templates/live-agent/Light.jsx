@@ -6,20 +6,28 @@ import { useSession } from '../../../hooks/useSession';
 
 const LiveAgentLight = () => {
     const { toggleTheme } = useTheme();
-    const { sessionId } = useSession();
-    const { logs, metrics, startAnalysis } = useAnalysis(sessionId);
+    const { sessionId, loading: sessionLoading, error: sessionError, refreshSession } = useSession();
+    const { logs, metrics, startAnalysis, canStart, socketState, socketError } = useAnalysis(sessionId);
 
     const location = useLocation();
     const autoStartAttemptedRef = useRef(false);
+    const unknownSessionRecoveredRef = useRef(false);
     const startAnalysisRef = useRef(startAnalysis);
+    const refreshSessionRef = useRef(refreshSession);
 
     // Keep the latest callback without re-running the auto-start effect.
     useEffect(() => {
         startAnalysisRef.current = startAnalysis;
     }, [startAnalysis]);
+    useEffect(() => {
+        refreshSessionRef.current = refreshSession;
+    }, [refreshSession]);
 
     useEffect(() => {
         autoStartAttemptedRef.current = false;
+    }, [sessionId]);
+    useEffect(() => {
+        unknownSessionRecoveredRef.current = false;
     }, [sessionId]);
 
     useEffect(() => {
@@ -29,6 +37,14 @@ const LiveAgentLight = () => {
             startAnalysisRef.current();
         }
     }, [location.search, sessionId]);
+
+    useEffect(() => {
+        const msg = (socketError || '').toLowerCase();
+        if (msg.includes('unknown session_id') && !unknownSessionRecoveredRef.current) {
+            unknownSessionRecoveredRef.current = true;
+            refreshSessionRef.current();
+        }
+    }, [socketError]);
 
     return (
         <div className="bg-background font-body text-on-surface antialiased scan-line-bg min-h-screen flex flex-col">
@@ -48,7 +64,7 @@ const LiveAgentLight = () => {
             {/* Top Navigation */}
             <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)] tonal-shift-bottom">
                 <div className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
-                    <div className="text-xl font-bold tracking-tighter text-emerald-900 font-headline">CreditSense AI</div>
+                    <div className="text-xl font-bold tracking-tighter text-emerald-900 font-headline">FINROCK</div>
                     <div className="hidden md:flex items-center gap-8">
                         <Link className="text-emerald-800/60 font-medium font-headline tracking-tight hover:text-emerald-900 transition-colors" to="/">Home</Link>
                         <Link className="text-emerald-900 font-bold border-b-2 border-emerald-900 pb-1 font-headline tracking-tight" to="/dashboard">Dashboard</Link>
@@ -58,15 +74,20 @@ const LiveAgentLight = () => {
                     </div>
                     <button
                         onClick={() => startAnalysis()}
-                        disabled={!sessionId}
-                        className={`bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-bold text-sm hover:opacity-90 transition-all active:scale-95 duration-200 ${!sessionId ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={!sessionId || !canStart || sessionLoading}
+                        className={`bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-bold text-sm hover:opacity-90 transition-all active:scale-95 duration-200 ${(!sessionId || !canStart || sessionLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        Run Analysis
+                        {sessionLoading ? 'Preparing Session...' : !canStart ? 'Connecting...' : 'Run Analysis'}
                     </button>
                 </div>
             </nav>
 
             <main className="mt-24 px-8 max-w-7xl mx-auto w-full flex-grow pb-20 overflow-y-auto custom-scrollbar">
+                {(sessionError || socketError) && (
+                    <div className="mb-6 rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">
+                        {sessionError || socketError}
+                    </div>
+                )}
                 {/* Live Agent Header Area */}
                 <header className="flex justify-between items-end mb-10">
                     <div className="space-y-1">
@@ -75,8 +96,10 @@ const LiveAgentLight = () => {
                     </div>
                     <div className="flex gap-4">
                         <div className="bg-surface-container-lowest px-4 py-2 rounded-lg flex items-center gap-3 border border-outline-variant/10 shadow-sm">
-                            <span className={`w-2 h-2 rounded-full ${logs.length > 0 ? 'bg-secondary animate-pulse' : 'bg-zinc-300'}`}></span>
-                            <span className="font-label text-xs font-bold uppercase">{logs.length > 0 ? 'System: Processing' : 'System: Operational'}</span>
+                            <span className={`w-2 h-2 rounded-full ${socketState === 'open' ? 'bg-secondary animate-pulse' : socketState === 'error' ? 'bg-red-500' : 'bg-zinc-300'}`}></span>
+                            <span className="font-label text-xs font-bold uppercase">
+                                {sessionLoading ? 'Session: Initializing' : socketState === 'open' ? (logs.length > 0 ? 'System: Processing' : 'System: Ready') : socketState === 'error' ? 'System: Connection Error' : 'System: Connecting'}
+                            </span>
                         </div>
                     </div>
                 </header>
@@ -192,7 +215,7 @@ const LiveAgentLight = () => {
                         <div className="bg-gradient-to-br from-primary/5 to-emerald-50 p-6 rounded-2xl border border-primary/10 shadow-sm mt-8">
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Agent Context</h3>
                             <p className="text-xs font-headline font-bold text-primary/80 italic">
-                                "{metrics.insight || "Connecting to CreditSense backend for live risk appraisal telemetry..."}"
+                                "{metrics.insight || "Connecting to FINROCK backend for live risk appraisal telemetry..."}"
                             </p>
                         </div>
                     </section>
@@ -201,8 +224,8 @@ const LiveAgentLight = () => {
 
             <footer className="w-full py-12 mt-auto bg-white border-t border-outline-variant/10">
                 <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-6 text-emerald-900/60">
-                    <div className="font-headline font-bold text-emerald-900 opacity-100">CreditSense AI</div>
-                    <p className="font-body text-xs font-bold uppercase tracking-wider">© 2024 CreditSense AI. ALL RIGHTS RESERVED.</p>
+                    <div className="font-headline font-bold text-emerald-900 opacity-100">FINROCK</div>
+                    <p className="font-body text-xs font-bold uppercase tracking-wider">© 2024 FINROCK. ALL RIGHTS RESERVED.</p>
                 </div>
             </footer>
         </div>

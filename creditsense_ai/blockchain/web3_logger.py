@@ -125,7 +125,7 @@ class BlockchainLogger:
         return tx_hash
 
     def log_action(
-        self, loan_id: str, step: int, action_code: int, state_hash: bytes
+        self, loan_id: str, action_code: int, state_hash: bytes
     ) -> str:
         """
         Anchors the RL step payload using the compressed state hash.
@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
         print(f"\n⏳ Logging an RL action...")
         state_hash = compress_state_to_hash([0.0] * 17)
-        tx = logger.log_action("LOAN001", 1, 5, state_hash)
+        tx = logger.log_action("LOAN001", 5, state_hash)
         print(f"🥇 Success! TX Hash: {tx}")
 
         print(f"\n⏳ Logging a final decision...")

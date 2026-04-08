@@ -43,7 +43,7 @@ const ResultsDark = () => {
 `}</style>
             <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
                 <div className="flex justify-between items-center w-full px-8 h-20 max-w-[1920px] mx-auto">
-                    <div className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">KINETIC VAULT</div>
+                    <div className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">FINROCK</div>
                     <div className="hidden md:flex items-center space-x-8 font-headline tracking-tight uppercase text-[10px] font-black">
                         <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/">Markets</Link>
                         <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/live-agent">Analysis</Link>
@@ -51,7 +51,7 @@ const ResultsDark = () => {
                         <Link className="text-[#85f1ca] border-b-2 border-[#85f1ca] pb-1" to="/results">Reports</Link>
                         <button onClick={toggleTheme} className="text-zinc-400 hover:text-primary transition-colors text-xs">Switch Theme</button>
                     </div>
-                    <Link to="/live-agent" className="bg-gradient-to-r from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(133,241,202,0.3)] transition-all active:scale-95 duration-200">
+                    <Link to="/live-agent?autostart=1" className="bg-gradient-to-r from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(133,241,202,0.3)] transition-all active:scale-95 duration-200">
                         Run Analysis
                     </Link>
                 </div>
@@ -90,7 +90,7 @@ const ResultsDark = () => {
                     </div>
                     <div className="hidden md:flex items-center gap-6">
                         <span className="text-black/80 text-xs font-bold uppercase tracking-widest">Session: {sessionId || '...'}</span>
-                        <Link to="/live-agent" className="bg-black text-primary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all">Go Live</Link>
+                        <Link to="/live-agent?autostart=1" className="bg-black text-primary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all">Go Live</Link>
                     </div>
                 </div>
 
@@ -98,7 +98,7 @@ const ResultsDark = () => {
                     <header className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
                         <div className="space-y-2">
                             <p className="text-primary font-bold text-xs tracking-[0.2em] uppercase">Analysis Engine v4.2</p>
-                            <h1 className="text-6xl font-headline font-bold tracking-tighter leading-none">CreditSense AI <br /><span className="text-zinc-500">Global Assessment</span></h1>
+                            <h1 className="text-6xl font-headline font-bold tracking-tighter leading-none">FINROCK <br /><span className="text-zinc-500">Global Assessment</span></h1>
                         </div>
                         <div className="bg-surface-container-low p-6 rounded-xl text-right border border-white/5 shadow-xl">
                             <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-1">Risk Index</p>

@@ -30,7 +30,7 @@ const LandingLight = () => {
 <nav className="fixed top-0 w-full z-50 glass-header shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
 <div className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
 <div className="text-xl font-headline font-bold tracking-tighter text-emerald-900">
-                CreditSense AI
+                FINROCK
             </div>
 <div className="hidden md:flex gap-10 items-center">
 <Link className="text-emerald-900 font-headline font-bold border-b-2 border-emerald-900 pb-1" to="/">Home</Link>
@@ -39,7 +39,7 @@ const LandingLight = () => {
 <Link className="text-emerald-800/60 font-medium hover:text-emerald-900 transition-colors" to="/live-agent">Live Agent</Link>
 <button onClick={toggleTheme} className="text-emerald-800/60 font-medium hover:text-emerald-900 transition-colors uppercase text-[10px] tracking-widest font-bold">Switch Theme</button>
 </div>
-<Link to="/live-agent" className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-semibold text-sm hover:opacity-90 transition-all scale-95 duration-200 ease-in-out text-center">
+<Link to="/dashboard" className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-semibold text-sm hover:opacity-90 transition-all scale-95 duration-200 ease-in-out text-center">
                 Run Analysis
             </Link>
 </div>
@@ -57,7 +57,7 @@ const LandingLight = () => {
                         Precision in financial engineering. Leverage blockchain-verified datasets and neural risk models to audit corporate credit with unprecedented speed.
                     </p>
 <div className="flex gap-4">
-<Link to="/live-agent" className="bg-primary text-on-primary px-8 py-4 rounded-xl font-headline font-bold text-lg hover:shadow-xl transition-all">Start Audit</Link>
+<Link to="/dashboard" className="bg-primary text-on-primary px-8 py-4 rounded-xl font-headline font-bold text-lg hover:shadow-xl transition-all">Start Audit</Link>
 <button className="bg-surface-container-low text-primary px-8 py-4 rounded-xl font-headline font-bold text-lg hover:bg-surface-container transition-all">Book Demo</button>
 </div>
 </div>
@@ -199,8 +199,8 @@ const LandingLight = () => {
 <footer className="w-full py-12 mt-auto bg-emerald-50 text-emerald-900">
 <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-6">
 <div className="flex flex-col items-center md:items-start gap-2">
-<span className="font-headline font-bold text-emerald-900 text-xl">CreditSense AI</span>
-<p className="font-body text-sm antialiased text-emerald-800/70">© 2024 CreditSense AI. Precision in Financial Engineering.</p>
+<span className="font-headline font-bold text-emerald-900 text-xl">FINROCK</span>
+<p className="font-body text-sm antialiased text-emerald-800/70">© 2024 FINROCK. Precision in Financial Engineering.</p>
 </div>
 <div className="flex gap-8">
 <a className="font-body text-sm text-emerald-800/70 hover:text-emerald-900 transition-all" href="#">Privacy</a>

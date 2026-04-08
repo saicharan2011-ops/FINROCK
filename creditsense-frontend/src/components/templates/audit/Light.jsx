@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
-import { getResults } from '../../../lib/backend';
+import { getResults, verifyDocumentIntegrity } from '../../../lib/backend';
 
 const STORAGE_KEY = 'creditsense.session_id';
 
@@ -9,6 +9,12 @@ const AuditLight = () => {
     const { toggleTheme } = useTheme();
     const [blockchain, setBlockchain] = useState({ enabled: false, txs: [] });
     const [loading, setLoading] = useState(true);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileHash, setFileHash] = useState('');
+    const [verifyResult, setVerifyResult] = useState(null);
+    const [verifying, setVerifying] = useState(false);
+    const [verifyError, setVerifyError] = useState('');
+    const fileInputRef = useRef(null);
     const sessionId = localStorage.getItem(STORAGE_KEY) || '';
 
     useEffect(() => {
@@ -27,10 +33,69 @@ const AuditLight = () => {
 
     const txs = blockchain.txs || [];
 
+    const formatBytes = (bytes) => {
+        if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes;
+        let idx = 0;
+        while (size >= 1024 && idx < units.length - 1) {
+            size /= 1024;
+            idx += 1;
+        }
+        return `${size.toFixed(size >= 10 || idx === 0 ? 0 : 1)} ${units[idx]}`;
+    };
+
+    const hashFile = async (file) => {
+        const buffer = await file.arrayBuffer();
+        const digest = await crypto.subtle.digest('SHA-256', buffer);
+        const hashArray = Array.from(new Uint8Array(digest));
+        return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    };
+
+    const handleFileSelect = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        setVerifyError('');
+        setVerifyResult(null);
+        setSelectedFile(file);
+        setFileHash('');
+        try {
+            const hash = await hashFile(file);
+            setFileHash(hash);
+        } catch {
+            setVerifyError('Failed to compute file hash. Please try another file.');
+        }
+    };
+
     const eventTypeColor = (kind) => {
         if (kind === 'DOC_HASH') return 'bg-secondary-container text-on-secondary-container';
         if (kind === 'DECISION') return 'bg-primary-container text-on-primary-container';
+        if (kind === 'VERIFICATION') return 'bg-tertiary text-on-tertiary';
         return 'bg-surface-container-high text-on-surface-variant';
+    };
+
+    const handleVerifyIntegrity = async () => {
+        if (!sessionId) {
+            setVerifyError('No active session found. Please run analysis from dashboard first.');
+            return;
+        }
+        if (!selectedFile) {
+            setVerifyError('Please select a document first.');
+            return;
+        }
+        setVerifying(true);
+        setVerifyError('');
+        try {
+            const result = await verifyDocumentIntegrity(sessionId, selectedFile);
+            setVerifyResult(result);
+            // Refresh audit feed to show verification event in table.
+            const data = await getResults(sessionId);
+            if (data?.blockchain) setBlockchain(data.blockchain);
+        } catch (e) {
+            setVerifyError(e?.message || 'Failed to verify document integrity.');
+        } finally {
+            setVerifying(false);
+        }
     };
 
     return (
@@ -48,7 +113,7 @@ const AuditLight = () => {
             <header className="fixed top-0 w-full z-50 glass-header shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
                 <div className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
                     <div className="text-xl font-headline font-bold tracking-tighter text-primary">
-                        CreditSense AI
+                        FINROCK
                     </div>
                     <nav className="hidden md:flex items-center gap-8">
                         <Link className="text-emerald-800/60 font-medium font-headline hover:text-primary transition-colors uppercase text-[10px] tracking-widest font-black" to="/">Home</Link>
@@ -57,7 +122,7 @@ const AuditLight = () => {
                         <Link className="text-emerald-800/60 font-medium font-headline hover:text-primary transition-colors uppercase text-[10px] tracking-widest font-black" to="/results">Insights</Link>
                         <button onClick={toggleTheme} className="text-emerald-800/60 font-medium hover:text-emerald-900 transition-colors uppercase text-[10px] tracking-widest font-black">Switch Theme</button>
                     </nav>
-                    <Link to="/live-agent" className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-bold scale-95 hover:scale-100 duration-200 ease-in-out text-center">
+                    <Link to="/live-agent?autostart=1" className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-bold scale-95 hover:scale-100 duration-200 ease-in-out text-center">
                         Run Analysis
                     </Link>
                 </div>
@@ -71,7 +136,7 @@ const AuditLight = () => {
                             Blockchain-Verified <br />Audit Intelligence.
                         </h1>
                         <p className="text-on-surface-variant text-lg max-w-lg mb-8 leading-relaxed">
-                            CreditSense AI leverages decentralized ledgers to ensure every model decision, agent action, and document hash is permanently anchored for regulatory compliance.
+                            FINROCK leverages decentralized ledgers to ensure every model decision, agent action, and document hash is permanently anchored for regulatory compliance.
                         </p>
                         <div className="flex gap-4">
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${blockchain.enabled ? 'bg-emerald-100' : 'bg-surface-container'}`}>
@@ -186,7 +251,56 @@ const AuditLight = () => {
                             </div>
                             <p className="font-body text-on-surface-variant mb-2">Drag and drop file to verify its integrity</p>
                             <p className="font-label font-bold text-[10px] text-outline-variant uppercase tracking-widest">PDF, JSON, or CSV (MAX 25MB)</p>
-                            <button className="mt-8 px-8 py-3 bg-primary text-on-primary rounded-xl font-headline font-bold text-sm">Select Document</button>
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.json,.csv"
+                                onChange={handleFileSelect}
+                            />
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="mt-8 px-8 py-3 bg-primary text-on-primary rounded-xl font-headline font-bold text-sm"
+                            >
+                                Select Document
+                            </button>
+                            {selectedFile && (
+                                <div className="mt-6 w-full max-w-2xl bg-surface-container-low rounded-xl p-4 text-left">
+                                    <p className="text-sm font-semibold text-primary truncate">{selectedFile.name}</p>
+                                    <p className="text-xs text-on-surface-variant mt-1">Size: {formatBytes(selectedFile.size)}</p>
+                                    <p className="text-xs text-on-surface-variant mt-1 break-all">
+                                        SHA-256: {fileHash || 'Computing...'}
+                                    </p>
+                                </div>
+                            )}
+                            {verifyError && (
+                                <p className="mt-4 text-xs text-red-600 font-medium">{verifyError}</p>
+                            )}
+                            {verifyResult && (
+                                <div className={`mt-4 w-full max-w-2xl rounded-xl p-4 text-left border ${verifyResult.matched ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
+                                    <p className={`text-sm font-bold ${verifyResult.matched ? 'text-emerald-700' : 'text-amber-700'}`}>
+                                        {verifyResult.matched ? 'Match Found' : 'Mismatch'}
+                                    </p>
+                                    <p className="text-xs text-on-surface-variant mt-1 break-all">
+                                        Uploaded hash: {verifyResult.uploaded_hash}
+                                    </p>
+                                    <p className="text-xs text-on-surface-variant mt-1">
+                                        Matched docs: {verifyResult.matched_doc_types?.length ? verifyResult.matched_doc_types.join(', ') : 'None'}
+                                    </p>
+                                    {verifyResult.blockchain_tx_hash && (
+                                        <p className="text-xs text-on-surface-variant mt-1 break-all">
+                                            Blockchain tx: {verifyResult.blockchain_tx_hash}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                            <button
+                                onClick={handleVerifyIntegrity}
+                                disabled={!selectedFile || !fileHash || verifying}
+                                className={`mt-4 px-8 py-3 rounded-xl font-headline font-bold text-sm ${(!selectedFile || !fileHash || verifying) ? 'bg-surface-container text-on-surface-variant cursor-not-allowed' : 'bg-primary text-on-primary'}`}
+                            >
+                                {verifying ? 'Verifying...' : 'Upload + Compare Hash'}
+                            </button>
                         </div>
                     </div>
 
@@ -230,10 +344,10 @@ const AuditLight = () => {
             <footer className="w-full py-12 mt-auto bg-secondary-fixed/30">
                 <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-6">
                     <div className="font-headline font-bold text-primary text-lg">
-                        CreditSense AI
+                        FINROCK
                     </div>
                     <p className="font-body text-sm antialiased text-on-surface-variant">
-                        © 2024 CreditSense AI. Precision in Financial Engineering.
+                        © 2024 FINROCK. Precision in Financial Engineering.
                     </p>
                     <div className="flex gap-8">
                         <a className="text-emerald-800/70 hover:text-primary transition-all text-sm font-medium" href="#">Privacy</a>

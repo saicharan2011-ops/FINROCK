@@ -6,10 +6,10 @@ from typing import Dict, Any
 class SectorScorer:
     def __init__(self):
         self.client = OpenAI(
-            api_key=os.environ.get("HF_TOKEN", ""),
-            base_url=os.environ.get("API_BASE_URL", "https://api.groq.com/openai/v1")
+            api_key=os.environ.get("GROQ_API_KEY") or os.environ.get("HF_TOKEN", ""),
+            base_url=os.environ.get("GROQ_API_BASE_URL") or os.environ.get("API_BASE_URL", "https://api.groq.com/openai/v1")
         )
-        self.model = os.environ.get("MODEL_NAME", "llama-3.1-8b-instant")
+        self.model = os.environ.get("GROQ_MODEL_NAME") or os.environ.get("MODEL_NAME", "llama3-70b-8192")
 
     def analyze_sector(self, sector_name: str) -> Dict[str, Any]:
         """

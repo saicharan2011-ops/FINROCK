@@ -1,8 +1,13 @@
 import axios from 'axios'
 
 const explicitBackend = import.meta.env.VITE_BACKEND_URL?.trim()
+const explicitWs = import.meta.env.VITE_WS_URL?.trim()
 const inferredOrigin =
-  typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000'
+  import.meta.env.DEV
+    ? 'http://localhost:8000'
+    : typeof window !== 'undefined'
+      ? window.location.origin
+      : 'http://localhost:8000'
 
 export const BACKEND_BASE_URL = explicitBackend || inferredOrigin
 
@@ -34,12 +39,39 @@ export async function getResults(sessionId) {
   return data
 }
 
+export async function verifyDocumentIntegrity(sessionId, file) {
+  const form = new FormData()
+  form.append('file', file)
+  const { data } = await api.post(`/api/sessions/${sessionId}/verify-document`, form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data
+}
+
 export function camDownloadUrl(sessionId) {
   return `${BACKEND_BASE_URL}/api/sessions/${sessionId}/cam.docx`
 }
 
 export function wsUrl(sessionId) {
-  const base = BACKEND_BASE_URL.replace(/^http/, 'ws')
+  const base = (explicitWs || BACKEND_BASE_URL).replace(/^http/, 'ws')
   return `${base}/ws/analyze/${sessionId}`
+}
+
+export function wsUrlCandidates(sessionId) {
+  const urls = []
+  if (explicitWs) {
+    urls.push(`${explicitWs.replace(/\/$/, '')}/ws/analyze/${sessionId}`)
+  } else {
+    urls.push(wsUrl(sessionId))
+  }
+
+  // Dev fallback: many users run backend on 8501 instead of 8000.
+  if (import.meta.env.DEV && !explicitWs && !explicitBackend) {
+    const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
+    urls.push(`ws://${host}:8501/ws/analyze/${sessionId}`)
+    urls.push(`ws://localhost:8000/ws/analyze/${sessionId}`)
+  }
+
+  return [...new Set(urls)]
 }
 

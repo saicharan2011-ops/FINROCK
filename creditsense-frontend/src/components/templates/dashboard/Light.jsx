@@ -94,7 +94,7 @@ const DashboardLight = () => {
             <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
                 <div className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
                     <div className="text-xl font-bold tracking-tighter text-emerald-900 font-headline">
-                        CreditSense AI
+                        FINROCK
                     </div>
                     <nav className="hidden md:flex items-center gap-8">
                         <Link className="text-emerald-800/60 font-medium hover:text-emerald-900 transition-colors" to="/">Home</Link>
@@ -103,7 +103,7 @@ const DashboardLight = () => {
                         <Link className="text-emerald-800/60 font-medium hover:text-emerald-900 transition-colors" to="/results">Insights</Link>
                         <button onClick={toggleTheme} className="text-emerald-800/60 font-medium hover:text-emerald-900 transition-colors uppercase text-[10px] tracking-widest font-bold">Switch Theme</button>
                     </nav>
-                    <Link to="/live-agent" className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-medium hover:opacity-90 transition-all active:scale-95 duration-200">
+                    <Link to="/live-agent?autostart=1" className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-medium hover:opacity-90 transition-all active:scale-95 duration-200">
                         Run Analysis
                     </Link>
                 </div>
@@ -244,8 +244,8 @@ const DashboardLight = () => {
             <footer className="w-full py-12 mt-auto bg-emerald-50 font-['Manrope'] text-sm antialiased border-t border-outline-variant/10">
                 <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-6 text-emerald-900">
                     <div className="flex flex-col gap-2 scale-90 origin-left">
-                        <span className="font-headline font-bold text-emerald-900 text-lg">CreditSense AI</span>
-                        <span className="text-emerald-800/70 font-medium">© 2024 CreditSense AI. Precision in Financial Engineering.</span>
+                        <span className="font-headline font-bold text-emerald-900 text-lg">FINROCK</span>
+                        <span className="text-emerald-800/70 font-medium">© 2024 FINROCK. Precision in Financial Engineering.</span>
                     </div>
                     <div className="flex gap-8 scale-90 origin-right">
                         <a className="text-emerald-800/70 hover:text-emerald-900 transition-all opacity-80 hover:opacity-100 font-bold" href="#">Privacy</a>

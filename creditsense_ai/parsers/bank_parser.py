@@ -35,6 +35,7 @@ class BankParser:
             
             if existing_ratios.op_margin and total_inflows > 0:
                 net_income = total_inflows * existing_ratios.op_margin
-                existing_ratios.dscr = round(net_income / annual_emi, 4) if annual_emi else None
+                dscr_val = round(net_income / annual_emi, 4) if annual_emi else None
+                existing_ratios = existing_ratios.model_copy(update={"dscr": dscr_val}, deep=True)
                 
         return existing_ratios, total_inflows

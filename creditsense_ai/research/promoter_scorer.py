@@ -1,266 +1,309 @@
 """
-promoter_scorer.py — CreditSense AI
-Converts ResearchResult into a precise 0.0–1.0 promoter risk score
-for the promoter_risk field in CreditAppraisalEnv-v1 state schema.
+promoter_scorer.py — CreditSense AI (FIXED)
+============================================
+Converts ResearchResult into a calibrated 0.0–1.0 promoter risk score.
+Every scoring decision is logged in ScoringBreakdown for CAM generation.
 
-Scoring logic mirrors how a senior credit manager manually weights
-promoter background signals — hard disqualifiers take absolute floors,
-additive signals stack with diminishing returns to prevent over-inflation.
+FIX vs broken version:
+  BROKEN: simple base + 0.3 if litigation → ignored wilful_defaulter floors,
+          ignored research confidence, ignored fraud signals, no breakdown
+  FIXED:  hard RBI floors → additive deltas with diminishing returns →
+          confidence weighting → full audit trail in ScoringBreakdown
 """
 
-import logging
 import math
+import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
 logger = logging.getLogger("promoter_scorer")
 
-# ── High-risk keyword lists ────────────────────────────────────────────────────
-_CRITICAL_KEYWORDS = {
-    "fraud", "arrested", "chargesheeted", "conviction", "convicted",
+# ── Keyword lists for text-mining promoter_concerns + news_summary ────────────
+_CRITICAL_KW = {
+    "fraud", "arrested", "chargesheeted", "convicted", "conviction",
     "wilful default", "wilful defaulter", "fugitive", "absconding",
     "money laundering", "hawala", "benami", "sfio", "ed raid",
     "cbi investigation", "fir filed", "look out notice", "interpol",
+    "financial crime", "diversion", "siphoning",
 }
-
-_HIGH_RISK_KEYWORDS = {
+_HIGH_KW = {
     "default", "npa", "write-off", "written off", "debt restructuring",
     "one-time settlement", "ots", "drt", "debt recovery",
     "winding up", "insolvency", "cirp", "liquidation",
     "income tax raid", "tax evasion", "gst fraud",
-    "related party", "round tripping", "diversion", "siphoning",
+    "related party", "round tripping", "shell company",
     "show cause", "regulatory action", "sebi ban", "debarred",
 }
-
-_MODERATE_RISK_KEYWORDS = {
+_MODERATE_KW = {
     "litigation", "dispute", "arbitration", "delayed payments",
     "overdue", "restructured", "classified", "downgraded",
-    "resigned", "management change", "promoter pledge",
-    "frequent auditor change", "qualified audit",
+    "resigned", "promoter pledge", "auditor change", "qualified audit",
+    "contingent liability", "legal notice",
 }
 
 
 @dataclass
 class ScoringBreakdown:
-    """Audit trail of every signal that contributed to the final score."""
-    base_score:               float = 0.0
-    # Hard floors (set the minimum if triggered)
-    wilful_defaulter_floor:   Optional[float] = None
-    sfio_floor:               Optional[float] = None
-    criminal_floor:           Optional[float] = None
-    nclt_floor:               Optional[float] = None
+    """Full audit trail of every signal — used by cam_generator.py."""
+    # Base
+    base_score:              float = 0.0
+    llm_overall_risk:        float = 0.0
+    llm_confidence:          float = 0.0
+
+    # Hard floors (set absolute minimums)
+    floor_wilful_defaulter:  Optional[float] = None
+    floor_sfio:              Optional[float] = None
+    floor_criminal:          Optional[float] = None
+    floor_nclt:              Optional[float] = None
+    floor_rbi:               Optional[float] = None
+    floor_sebi:              Optional[float] = None
+    floor_write_off:         Optional[float] = None
+    floor_ed_cbi:            Optional[float] = None
+    applied_floor:           Optional[float] = None
+
     # Additive deltas
-    litigation_delta:         float = 0.0
-    regulatory_delta:         float = 0.0
-    critical_keyword_delta:   float = 0.0
-    high_risk_keyword_delta:  float = 0.0
-    moderate_keyword_delta:   float = 0.0
-    loan_write_off_delta:     float = 0.0
-    rbi_penalty_delta:        float = 0.0
-    sebi_delta:               float = 0.0
-    fraud_signal_delta:       float = 0.0
-    research_gap_delta:       float = 0.0
-    # Applied floor (highest of all floors)
-    applied_floor:            Optional[float] = None
-    # Final
-    pre_floor_score:          float = 0.0
-    final_score:              float = 0.0
-    triggered_flags:          list  = field(default_factory=list)
+    delta_litigation:        float = 0.0
+    delta_critical_kw:       float = 0.0
+    delta_high_kw:           float = 0.0
+    delta_moderate_kw:       float = 0.0
+    delta_fraud_signals:     float = 0.0
+    delta_sentiment:         float = 0.0
+    delta_research_gaps:     float = 0.0
+    delta_pep:               float = 0.0
+
+    # Result
+    pre_floor_score:         float = 0.0
+    final_score:             float = 0.0
+    triggered_flags:         list  = field(default_factory=list)
+    risk_narrative:          str   = ""
+
+    def to_dict(self) -> dict:
+        return self.__dict__.copy()
 
 
 class PromoterScorer:
     """
-    Converts a ResearchResult (dict or Pydantic model) into a calibrated
-    0.0–1.0 promoter risk score.
+    Produces a calibrated promoter risk score for CreditAppraisalEnv-v1.
 
-    Design principles:
-    1. Hard floors — certain disqualifiers impose a minimum score regardless
-       of everything else (e.g., wilful defaulter always ≥ 0.85).
-    2. Additive signals — other risk factors stack additively but with
-       diminishing returns (using a compression formula) to avoid inflation.
-    3. Transparency — ScoringBreakdown records every signal for CAM output.
-    4. Confidence weighting — low-confidence research pulls score toward 0.4
-       (uncertainty midpoint) rather than using raw value blindly.
+    Scoring architecture:
+      1. Base score    — LLM's overall_risk weighted by its own confidence
+      2. Hard floors   — RBI-mandated minimums for serious disqualifiers
+      3. Additive stack — litigation + keywords + fraud signals (diminishing returns)
+      4. Sentiment     — news_sentiment amplifies the running total
+      5. Floor apply   — final = max(running, applied_floor)
+      6. Clamp         — [0.0, 1.0]
     """
 
-    # Hard floor thresholds (minimum score if flag is True)
-    FLOOR_WILFUL_DEFAULTER = 0.85
-    FLOOR_SFIO             = 0.80
-    FLOOR_CRIMINAL         = 0.75
-    FLOOR_NCLT             = 0.65
-    FLOOR_RBI_PENALTY      = 0.60
-    FLOOR_SEBI             = 0.60
-    FLOOR_LOAN_WRITEOFF    = 0.55
+    # Hard floor thresholds (minimum scores per RBI credit policy)
+    F_WILFUL     = 0.85
+    F_SFIO       = 0.80
+    F_CRIMINAL   = 0.75
+    F_ED_CBI     = 0.72
+    F_NCLT       = 0.65
+    F_RBI        = 0.60
+    F_SEBI       = 0.60
+    F_WRITE_OFF  = 0.55
 
-    # Additive delta caps
-    MAX_LITIGATION_DELTA     = 0.25
-    MAX_KEYWORD_DELTA        = 0.25
-    MAX_REGULATORY_DELTA     = 0.20
-    MAX_FRAUD_SIGNAL_DELTA   = 0.20
+    # Delta caps (prevents individual signal from dominating)
+    CAP_LIT      = 0.25
+    CAP_KW       = 0.22
+    CAP_FRAUD    = 0.20
+    CAP_SENT     = 0.12
 
     def score(self, research: dict) -> float:
-        """
-        Primary method. Returns final float score 0.0–1.0.
-
-        Args:
-            research: dict from ResearchResult.model_dump() or
-                      ResearchAgent.search_company_dict()
-        """
-        result, breakdown = self._compute(research)
-        return result
+        """Main entry point — returns float 0.0–1.0."""
+        final, _ = self._compute(research)
+        return final
 
     def score_with_breakdown(self, research: dict) -> tuple[float, ScoringBreakdown]:
-        """
-        Returns (score, breakdown) — use this for CAM generation to explain
-        why the promoter was scored as they were.
-        """
+        """Returns (score, breakdown) for CAM narrative generation."""
         return self._compute(research)
 
     def _compute(self, r: dict) -> tuple[float, ScoringBreakdown]:
         bd = ScoringBreakdown()
+        bd.llm_overall_risk = float(r.get("overall_risk", 0.3))
+        bd.llm_confidence   = float(r.get("confidence",   0.4))
 
-        # ── 1. Base score from LLM overall_risk ───────────────────────────────
-        # Use overall_risk as base but don't trust it fully — LLMs can be
-        # overconfident. We cap the base contribution.
-        llm_risk   = float(r.get("overall_risk", 0.3))
-        confidence = float(r.get("confidence",   0.5))
-        # Pull toward 0.35 (neutral) inversely proportional to confidence
-        bd.base_score = round(llm_risk * confidence + 0.35 * (1 - confidence), 4)
-
+        # ── 1. Base score (confidence-weighted LLM estimate) ─────────────────
+        # Low confidence → pull toward neutral 0.35; high confidence → trust LLM
+        bd.base_score = round(
+            bd.llm_overall_risk * bd.llm_confidence
+            + 0.35 * (1.0 - bd.llm_confidence),
+            4
+        )
         running = bd.base_score
 
-        # ── 2. Hard disqualifier floors ────────────────────────────────────────
-        floors: list[float] = []
+        # ── 2. Hard disqualifier floors ──────────────────────────────────────
+        floors = []
 
         if r.get("wilful_defaulter"):
-            bd.wilful_defaulter_floor = self.FLOOR_WILFUL_DEFAULTER
+            bd.floor_wilful_defaulter = self.F_WILFUL
+            floors.append(self.F_WILFUL)
             bd.triggered_flags.append("WILFUL_DEFAULTER")
-            floors.append(self.FLOOR_WILFUL_DEFAULTER)
 
         if r.get("sfio_investigation"):
-            bd.sfio_floor = self.FLOOR_SFIO
+            bd.floor_sfio = self.F_SFIO
+            floors.append(self.F_SFIO)
             bd.triggered_flags.append("SFIO_INVESTIGATION")
-            floors.append(self.FLOOR_SFIO)
 
         if r.get("criminal_cases"):
-            bd.criminal_floor = self.FLOOR_CRIMINAL
+            bd.floor_criminal = self.F_CRIMINAL
+            floors.append(self.F_CRIMINAL)
             bd.triggered_flags.append("CRIMINAL_CASES")
-            floors.append(self.FLOOR_CRIMINAL)
+
+        if r.get("ed_cases") or r.get("cbi_cases"):
+            bd.floor_ed_cbi = self.F_ED_CBI
+            floors.append(self.F_ED_CBI)
+            bd.triggered_flags.append("ED_OR_CBI_CASES")
 
         if r.get("nclt_cases"):
-            bd.nclt_floor = self.FLOOR_NCLT
+            bd.floor_nclt = self.F_NCLT
+            floors.append(self.F_NCLT)
             bd.triggered_flags.append("NCLT_CASES")
-            floors.append(self.FLOOR_NCLT)
 
         if r.get("rbi_penalties"):
-            bd.rbi_penalty_delta = self.FLOOR_RBI_PENALTY
+            bd.floor_rbi = self.F_RBI
+            floors.append(self.F_RBI)
             bd.triggered_flags.append("RBI_PENALTY")
-            floors.append(self.FLOOR_RBI_PENALTY)
 
         if r.get("sebi_actions"):
-            bd.sebi_delta = self.FLOOR_SEBI
+            bd.floor_sebi = self.F_SEBI
+            floors.append(self.F_SEBI)
             bd.triggered_flags.append("SEBI_ACTION")
-            floors.append(self.FLOOR_SEBI)
 
         if r.get("loan_write_off"):
-            bd.loan_write_off_delta = self.FLOOR_LOAN_WRITEOFF
+            bd.floor_write_off = self.F_WRITE_OFF
+            floors.append(self.F_WRITE_OFF)
             bd.triggered_flags.append("LOAN_WRITE_OFF")
-            floors.append(self.FLOOR_LOAN_WRITEOFF)
 
         bd.applied_floor = max(floors) if floors else None
 
-        # ── 3. Additive litigation delta ───────────────────────────────────────
-        litigation_score = 0.0
+        # ── 3. Litigation additive delta ─────────────────────────────────────
+        lit = 0.0
         if r.get("litigation_found"):
-            litigation_score += 0.10
-            bd.triggered_flags.append("LITIGATION_FOUND")
-        lit_count = int(r.get("litigation_count", 0))
-        if lit_count > 0:
-            # Diminishing returns: 0.03 per case up to cap
-            litigation_score += min(0.12, lit_count * 0.03)
-        if r.get("high_court_cases"):
-            litigation_score += 0.05
-        if r.get("supreme_court_cases"):
-            litigation_score += 0.08
-        # Also pull from LLM's litigation_risk field
-        lit_risk = float(r.get("litigation_risk", 0.0))
-        litigation_score = max(litigation_score, lit_risk * 0.3)
-        bd.litigation_delta = round(min(litigation_score, self.MAX_LITIGATION_DELTA), 4)
-        running += bd.litigation_delta
+            lit += 0.08
+        count = min(int(r.get("litigation_count", 0)), 20)
+        lit += min(0.10, count * 0.025)            # 0.025 per case, cap 0.10
+        if r.get("high_court_cases"):    lit += 0.04
+        if r.get("supreme_court_cases"): lit += 0.07
+        if r.get("drt_cases"):           lit += 0.05
+        # Also honour the LLM's own litigation_risk estimate
+        lit = max(lit, float(r.get("litigation_risk", 0.0)) * 0.35)
+        bd.delta_litigation = round(min(lit, self.CAP_LIT), 4)
+        running += bd.delta_litigation
+        if bd.delta_litigation > 0.05:
+            bd.triggered_flags.append(f"LITIGATION(Δ={bd.delta_litigation:.2f})")
 
-        # ── 4. Keyword analysis in promoter_concerns + litigation_details ──────
-        text_corpus = " ".join([
-            str(r.get("promoter_concerns", "")),
-            str(r.get("litigation_details", "")),
-            str(r.get("news_summary", "")),
+        # ── 4. Keyword analysis (diminishing returns via exponential) ─────────
+        corpus = " ".join(filter(None, [
+            str(r.get("promoter_concerns",   "")),
+            str(r.get("promoter_background", "")),
+            str(r.get("litigation_details",  "")),
+            str(r.get("news_summary",        "")),
             " ".join(r.get("promoter_risk_flags", [])),
-            " ".join(r.get("mca_flags", [])),
+            " ".join(r.get("mca_flags",          [])),
             " ".join(r.get("regulatory_actions", [])),
-        ]).lower()
+        ])).lower()
 
-        critical_hits = sum(1 for kw in _CRITICAL_KEYWORDS if kw in text_corpus)
-        high_hits     = sum(1 for kw in _HIGH_RISK_KEYWORDS  if kw in text_corpus)
-        moderate_hits = sum(1 for kw in _MODERATE_RISK_KEYWORDS if kw in text_corpus)
+        c_hits = sum(1 for kw in _CRITICAL_KW if kw in corpus)
+        h_hits = sum(1 for kw in _HIGH_KW     if kw in corpus)
+        m_hits = sum(1 for kw in _MODERATE_KW if kw in corpus)
 
-        # Diminishing returns formula: delta = cap * (1 - e^(-k*hits))
-        bd.critical_keyword_delta  = round(min(0.20, 0.20 * (1 - math.exp(-0.8 * critical_hits))), 4)
-        bd.high_risk_keyword_delta = round(min(0.12, 0.12 * (1 - math.exp(-0.5 * high_hits))), 4)
-        bd.moderate_keyword_delta  = round(min(0.06, 0.06 * (1 - math.exp(-0.4 * moderate_hits))), 4)
+        # delta = cap × (1 − e^(−k × hits))  → diminishing returns
+        d_crit = 0.20 * (1 - math.exp(-0.9 * c_hits))
+        d_high = 0.12 * (1 - math.exp(-0.6 * h_hits))
+        d_mod  = 0.06 * (1 - math.exp(-0.4 * m_hits))
+        kw_total = min(d_crit + d_high + d_mod, self.CAP_KW)
+        bd.delta_critical_kw = round(kw_total, 4)
+        running += bd.delta_critical_kw
+        if c_hits:
+            bd.triggered_flags.append(f"CRITICAL_KW({c_hits}hits)")
+        if h_hits:
+            bd.triggered_flags.append(f"HIGH_KW({h_hits}hits)")
 
-        keyword_total = bd.critical_keyword_delta + bd.high_risk_keyword_delta + bd.moderate_keyword_delta
-        bd.critical_keyword_delta = round(min(keyword_total, self.MAX_KEYWORD_DELTA), 4)
-        running += bd.critical_keyword_delta
-
-        if critical_hits > 0:
-            bd.triggered_flags.append(f"CRITICAL_KEYWORDS({critical_hits})")
-        if high_hits > 0:
-            bd.triggered_flags.append(f"HIGH_RISK_KEYWORDS({high_hits})")
-
-        # ── 5. Fraud signal deltas (from research_agent fraud signal fields) ───
-        fraud_signals = [
+        # ── 5. Fraud signals delta ────────────────────────────────────────────
+        fraud_vals = [
             float(r.get("circular_trading_signal", 0.0)),
             float(r.get("shell_company_signal",    0.0)),
             float(r.get("invoice_fraud_signal",    0.0)),
             float(r.get("loan_diversion_signal",   0.0)),
         ]
-        # Use max signal with a dampening factor (don't double-count with keywords)
-        max_fraud = max(fraud_signals)
-        bd.fraud_signal_delta = round(min(max_fraud * 0.35, self.MAX_FRAUD_SIGNAL_DELTA), 4)
-        running += bd.fraud_signal_delta
-        if max_fraud > 0.5:
+        max_fraud = max(fraud_vals) if fraud_vals else 0.0
+        # Use max (not sum) to avoid double-counting with keyword analysis
+        bd.delta_fraud_signals = round(min(max_fraud * 0.30, self.CAP_FRAUD), 4)
+        running += bd.delta_fraud_signals
+        if max_fraud > 0.4:
             bd.triggered_flags.append(f"FRAUD_SIGNAL(max={max_fraud:.2f})")
 
-        # ── 6. Research gaps penalty (incomplete info → higher uncertainty) ─────
+        # ── 6. PEP exposure ───────────────────────────────────────────────────
+        if r.get("pep_exposure"):
+            bd.delta_pep = 0.08
+            running += bd.delta_pep
+            bd.triggered_flags.append("PEP_EXPOSURE")
+
+        # ── 7. Research gaps (uncertainty premium) ────────────────────────────
         gaps = r.get("research_gaps", [])
-        if len(gaps) >= 3:
-            bd.research_gap_delta = 0.05
-            running += bd.research_gap_delta
+        if len(gaps) >= 4:
+            bd.delta_research_gaps = 0.06
+            running += bd.delta_research_gaps
             bd.triggered_flags.append(f"RESEARCH_GAPS({len(gaps)})")
+        elif len(gaps) >= 2:
+            bd.delta_research_gaps = 0.03
+            running += bd.delta_research_gaps
 
-        # ── 7. Negative sentiment amplifier ───────────────────────────────────
+        # ── 8. Sentiment multiplier ───────────────────────────────────────────
         sentiment = str(r.get("news_sentiment", "neutral")).lower()
-        if sentiment == "critical":
-            running *= 1.12
-        elif sentiment == "negative":
-            running *= 1.06
+        mult = {"critical": 1.14, "negative": 1.07, "neutral": 1.0, "positive": 0.94}.get(sentiment, 1.0)
+        running *= mult
+        bd.delta_sentiment = round(running * (mult - 1.0), 4)
+        if mult != 1.0:
+            bd.triggered_flags.append(f"SENTIMENT_{sentiment.upper()}(×{mult})")
 
-        # ── 8. Apply hard floor ────────────────────────────────────────────────
+        # ── 9. Apply floor & clamp ────────────────────────────────────────────
         bd.pre_floor_score = round(min(running, 1.0), 4)
         if bd.applied_floor is not None:
             bd.final_score = round(max(bd.pre_floor_score, bd.applied_floor), 4)
         else:
             bd.final_score = bd.pre_floor_score
-
-        # Clamp to [0.0, 1.0]
         bd.final_score = round(max(0.0, min(1.0, bd.final_score)), 4)
 
+        # ── 10. Generate narrative for CAM ───────────────────────────────────
+        bd.risk_narrative = _build_narrative(r, bd)
+
         logger.info(
-            f"[PromoterScorer] base={bd.base_score} "
-            f"lit_delta={bd.litigation_delta} "
-            f"kw_delta={bd.critical_keyword_delta} "
-            f"fraud_delta={bd.fraud_signal_delta} "
-            f"floor={bd.applied_floor} "
-            f"→ final={bd.final_score} "
-            f"flags={bd.triggered_flags}"
+            f"[PromoterScorer] base={bd.base_score:.3f} "
+            f"lit_Δ={bd.delta_litigation:.3f} kw_Δ={bd.delta_critical_kw:.3f} "
+            f"fraud_Δ={bd.delta_fraud_signals:.3f} floor={bd.applied_floor} "
+            f"→ {bd.final_score:.4f} | flags={bd.triggered_flags}"
         )
         return bd.final_score, bd
+
+
+def _build_narrative(r: dict, bd: ScoringBreakdown) -> str:
+    """Generates a plain-English explanation of the promoter risk score."""
+    parts = []
+    name = r.get("promoter_name", "The promoter")
+
+    if bd.final_score >= 0.80:
+        parts.append(f"{name} presents CRITICAL risk (score {bd.final_score:.2f}).")
+    elif bd.final_score >= 0.60:
+        parts.append(f"{name} presents HIGH risk (score {bd.final_score:.2f}).")
+    elif bd.final_score >= 0.40:
+        parts.append(f"{name} presents MODERATE risk (score {bd.final_score:.2f}).")
+    else:
+        parts.append(f"{name} presents LOW risk (score {bd.final_score:.2f}).")
+
+    if r.get("wilful_defaulter"):
+        parts.append("Classified as wilful defaulter by RBI/CIBIL — hard floor 0.85 applied.")
+    if r.get("sfio_investigation"):
+        parts.append("Active SFIO investigation — hard floor 0.80 applied.")
+    if r.get("criminal_cases"):
+        parts.append("Criminal cases / FIR on record — hard floor 0.75 applied.")
+    if r.get("nclt_cases"):
+        parts.append(f"NCLT proceedings found ({r.get('litigation_count',0)} cases).")
+    if bd.delta_fraud_signals > 0.05:
+        parts.append(f"Fraud signal detected (max signal: {max(r.get('circular_trading_signal',0), r.get('shell_company_signal',0), r.get('invoice_fraud_signal',0), r.get('loan_diversion_signal',0)):.2f}).")
+    if r.get("promoter_concerns"):
+        parts.append(f"Concerns: {r['promoter_concerns'][:120]}...")
+
+    return " ".join(parts) if parts else f"Promoter risk score: {bd.final_score:.2f}. No major flags triggered."

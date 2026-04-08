@@ -10,7 +10,7 @@ export default function LandingDark() {
       <style>{`
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .glass-card { background: rgba(38, 38, 38, 0.6); backdrop-filter: blur(20px); border-top: 1px solid rgba(133, 241, 202, 0.15); }
-        .primary-gradient { background: linear-gradient(135deg, #85f1ca 0%, #43b38f 100%); }
+        .primary-gradient { background-image: linear-gradient(135deg, #85f1ca 0%, #43b38f 100%); }
         .neon-glow { box-shadow: 0 0 20px rgba(133, 241, 202, 0.3); }
         .kinetic-bg {
           background-image:
@@ -21,9 +21,9 @@ export default function LandingDark() {
 
       <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
         <div className="flex justify-between items-center w-full px-8 h-20 max-w-[1920px] mx-auto">
-          <div className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">KINETIC VAULT</div>
+          <div className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">FINROCK</div>
           <div className="hidden md:flex items-center space-x-10 font-headline tracking-tight">
-            <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/dashboard">
+            <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/">
               Markets
             </Link>
             <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/live-agent">
@@ -39,7 +39,7 @@ export default function LandingDark() {
               Switch Theme
             </button>
           </div>
-          <Link to="/live-agent" className="primary-gradient text-black px-8 py-3 rounded-full font-bold font-headline tracking-tight hover:scale-105 active:scale-95 transition-all neon-glow text-center">
+          <Link to="/dashboard" className="primary-gradient text-black px-8 py-3 rounded-full font-bold font-headline tracking-tight hover:scale-105 active:scale-95 transition-all neon-glow text-center">
             Run Analysis
           </Link>
         </div>
@@ -63,7 +63,7 @@ export default function LandingDark() {
               <Link to="/dashboard" className="primary-gradient text-black px-10 py-5 rounded-full text-lg font-extrabold font-headline hover:scale-105 transition-all neon-glow uppercase tracking-tighter text-center">
                 Get Started
               </Link>
-              <Link to="/live-agent" className="glass-card text-on-surface px-10 py-5 rounded-full text-lg font-bold font-headline hover:bg-surface-variant/40 transition-all border border-outline-variant/20 text-center">
+              <Link to="/live-agent?autostart=1" className="glass-card text-on-surface px-10 py-5 rounded-full text-lg font-bold font-headline hover:bg-surface-variant/40 transition-all border border-outline-variant/20 text-center">
                 View Demo
               </Link>
             </div>
@@ -105,8 +105,8 @@ export default function LandingDark() {
       <footer className="bg-[#0e0e0e] w-full py-12">
         <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
           <div className="flex flex-col items-center md:items-start">
-            <span className="text-[#85f1ca] font-bold text-2xl font-headline tracking-tighter">KINETIC VAULT</span>
-            <span className="font-body text-[10px] uppercase tracking-[0.1em] text-zinc-600 mt-2">© 2024 KINETIC VAULT. ALL RIGHTS RESERVED.</span>
+            <span className="text-[#85f1ca] font-bold text-2xl font-headline tracking-tighter">FINROCK</span>
+            <span className="font-body text-[10px] uppercase tracking-[0.1em] text-zinc-600 mt-2">© 2024 FINROCK. ALL RIGHTS RESERVED.</span>
           </div>
           <div className="flex space-x-8">
             <a className="font-body text-[10px] uppercase tracking-[0.1em] text-zinc-600 hover:text-[#85f1ca] transition-colors" href="#">Privacy Policy</a>

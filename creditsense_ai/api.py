@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import random
 import uuid
@@ -36,6 +37,10 @@ def _import_research_agent():
 def _import_promoter_scorer():
     from creditsense_ai.research.promoter_scorer import PromoterScorer
     return PromoterScorer
+
+def _import_state_bridge():
+    from creditsense_ai.research.state_bridge import research_to_state
+    return research_to_state
 
 def _import_cam_generator():
     from creditsense_ai.output.cam_generator import CAMGenerator
@@ -84,6 +89,14 @@ class AnalysisSummaryResponse(BaseModel):
     insight: str
     blockchain: Dict[str, Any]
 
+class VerifyDocumentResponse(BaseModel):
+    session_id: str
+    uploaded_hash: str
+    matched: bool
+    matched_doc_types: list[str]
+    known_hashes: Dict[str, str]
+    blockchain_tx_hash: Optional[str] = None
+
 
 class _SessionStore:
     def __init__(self) -> None:
@@ -98,6 +111,7 @@ class _SessionStore:
         self.sessions[session_id] = {
             "dir": session_dir,
             "docs": {"gst": None, "bank": None, "annual": None, "itr": None, "mca": None},
+            "doc_hashes": {},
             "state": state,
             "results": None,
             "cam_docx": None,
@@ -181,6 +195,7 @@ async def upload_document(session_id: str, doc_type: str, file: UploadFile = Fil
     out_path = Path(sess["dir"]) / f"{doc_type}{ext}"
     out_path.write_bytes(raw)
     sess["docs"][doc_type] = str(out_path)
+    sess["doc_hashes"][doc_type] = hashlib.sha256(raw).hexdigest()
 
     state: CreditState = sess["state"]
     completeness = state.doc_completeness.model_copy(deep=True)
@@ -197,6 +212,52 @@ async def upload_document(session_id: str, doc_type: str, file: UploadFile = Fil
     sess["state"] = state.model_copy(update={"doc_completeness": completeness}, deep=True)
 
     return {"ok": True, "doc_type": doc_type, "path": str(out_path)}
+
+
+@app.post("/api/sessions/{session_id}/verify-document", response_model=VerifyDocumentResponse)
+async def verify_document(session_id: str, file: UploadFile = File(...)):
+    try:
+        sess = STORE.get(session_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Unknown session_id")
+
+    raw = await file.read()
+    if not raw:
+        raise HTTPException(status_code=400, detail="Empty upload")
+
+    uploaded_hash = hashlib.sha256(raw).hexdigest()
+    known_hashes: Dict[str, str] = dict(sess.get("doc_hashes") or {})
+    matched_doc_types = [doc_type for doc_type, doc_hash in known_hashes.items() if doc_hash == uploaded_hash]
+    matched = len(matched_doc_types) > 0
+
+    blockchain_tx_hash: Optional[str] = None
+    if sess.get("blockchain", {}).get("enabled"):
+        logger = _try_blockchain_logger()
+        if logger:
+            try:
+                verify_doc_type = f"verify_{matched_doc_types[0]}" if matched_doc_types else "verify_unknown"
+                blockchain_tx_hash = logger.log_document(session_id, verify_doc_type, raw)
+            except Exception:
+                blockchain_tx_hash = None
+
+    sess["blockchain"]["txs"].append(
+        {
+            "kind": "VERIFICATION",
+            "doc_type": ",".join(matched_doc_types) if matched_doc_types else "unknown",
+            "uploaded_hash": uploaded_hash,
+            "matched": matched,
+            "tx_hash": blockchain_tx_hash,
+        }
+    )
+
+    return VerifyDocumentResponse(
+        session_id=session_id,
+        uploaded_hash=uploaded_hash,
+        matched=matched,
+        matched_doc_types=matched_doc_types,
+        known_hashes=known_hashes,
+        blockchain_tx_hash=blockchain_tx_hash,
+    )
 
 
 def _try_blockchain_logger():
@@ -336,10 +397,10 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
     try:
         agent = _import_research_agent()(enable_validation_pass=True)
         rr = agent.search_company(state.company_name, loan_amount_cr=None, sector=None)
+        rr_dict = rr.model_dump()
 
         # Use PromoterScorer for calibrated promoter risk instead of raw LLM score
         scorer = _import_promoter_scorer()()
-        rr_dict = rr.model_dump()
         promoter_risk_score, promoter_breakdown = scorer.score_with_breakdown(rr_dict)
 
         # Map agent outputs -> state schema fields we already have
@@ -360,9 +421,30 @@ async def _run_pipeline(session_id: str) -> AnalysisSummaryResponse:
             f"Promoter Risk Score: {promoter_risk_score:.4f} (flags: {', '.join(promoter_breakdown.triggered_flags) if promoter_breakdown.triggered_flags else 'none'})\n"
             f"Gaps: {', '.join(rr.research_gaps) if rr.research_gaps else 'None'}"
         )
-        state = state.model_copy(update={"risk_signals": rs, "research_summary": research_summary}, deep=True)
-        gauges["shell"] = int(min(100, float(rr.shell_company_signal) * 100))
-        gauges["pep"] = int(min(100, float(rr.loan_diversion_signal) * 100))
+
+        # Bridge ResearchResult -> UI/env risk_scores so frontend gauges are non-zero.
+        bridge_state = _import_state_bridge()(rr, existing_state=state.model_dump())
+        risk_scores = bridge_state.get("risk_scores", {})
+        gauges["circular"] = int(min(100, float(risk_scores.get("circular", gauges["circular"] / 100.0)) * 100))
+        gauges["shell"] = int(min(100, float(risk_scores.get("shell_net", 0.0)) * 100))
+        gauges["lien"] = int(min(100, float(risk_scores.get("lien_exp", 0.0)) * 100))
+        gauges["pep"] = int(min(100, float(risk_scores.get("pep_screener", 0.0)) * 100))
+
+        # Keep state schema string fields intact while preserving bridge payload in parsed_data.
+        state = state.model_copy(
+            update={
+                "risk_signals": rs,
+                "research_summary": research_summary,
+                "parsed_data": {
+                    **(state.parsed_data or {}),
+                    "risk_scores": risk_scores,
+                    "research_summary": bridge_state.get("research_summary", {}),
+                    "research_complete": bridge_state.get("research_complete", True),
+                    "agent_context": bridge_state.get("agent_context", ""),
+                },
+            },
+            deep=True,
+        )
         await metrics("Research agent complete.", 88, ratios, gauges)
         await asyncio.sleep(0.15)
     except Exception as e:

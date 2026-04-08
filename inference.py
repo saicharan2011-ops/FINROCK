@@ -13,9 +13,9 @@ load_dotenv()
 from creditsense_ai.env.CreditAppraisalEnv import CreditAppraisalEnv
 from creditsense_ai.env.actions import AppraisalAction
 
-HF_TOKEN = os.environ.get("HF_TOKEN", "")
-API_BASE_URL = os.environ.get("API_BASE_URL", "https://api-inference.huggingface.co/v1/")
-MODEL_NAME = os.environ.get("MODEL_NAME", "meta-llama/Llama-3.1-8B-Instruct")
+HF_TOKEN = os.environ.get("GROQ_API_KEY") or os.environ.get("HF_TOKEN", "")
+API_BASE_URL = os.environ.get("GROQ_API_BASE_URL") or os.environ.get("API_BASE_URL", "https://api.groq.com/openai/v1")
+MODEL_NAME = os.environ.get("GROQ_MODEL_NAME") or os.environ.get("MODEL_NAME", "llama3-70b-8192")
 
 client = OpenAI(
     api_key=HF_TOKEN,

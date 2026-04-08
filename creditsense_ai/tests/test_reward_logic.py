@@ -1,6 +1,6 @@
 import unittest
 from creditsense_ai.env.reward_logic import calculate_reward
-from creditsense_ai.state_schema import CreditState, FinancialRatios, RiskFlags, DocumentStatus, PrimaryInsight
+from creditsense_ai.state_schema import CreditState, FinancialRatios, RiskSignals, DocCompleteness
 from creditsense_ai.env.actions import AppraisalAction
 
 class TestRewardLogic(unittest.TestCase):
@@ -11,19 +11,17 @@ class TestRewardLogic(unittest.TestCase):
             doc_completeness_pct=0.0,
             step_count=0,
             total_reward=0.0,
-            financial_ratios=FinancialRatios(dscr=1.0, debt_equity_ratio=1.0, current_ratio=1.0, interest_coverage=1.0, operating_margin=1.0),
-            risk_flags=RiskFlags(circular_trading=False, promoter_risk=0.0, litigation_risk=0.0, revenue_mismatch=False, sector_headwind=0.0),
-            document_status=DocumentStatus(gst=False, itr=False, bank_statement=False, annual_report=False, mca=False),
-            primary_insight=PrimaryInsight(factory_utilization=0.0, promoter_cooperation=1, notes="", composite_score=0.0),
-            turbo_metadata=None,
-            audit_trail=[]
+            financial_ratios=FinancialRatios(dscr=1.0, de_ratio=1.0, current_ratio=1.0, interest_coverage=1.0, op_margin=1.0),
+            risk_signals=RiskSignals(circular_trading_flag=0.0, promoter_risk=0.0, litigation_risk=0.0, sector_headwind=0.0),
+            doc_completeness=DocCompleteness(gst=False, itr=False, bank_stmt=False, annual_report=False, mca=False),
+            turbo_metadata=None
         )
         self.ground_truth = {"decision": "APPROVE"}
 
     def test_redundant_document_request(self):
         prev_state = self.base_state.model_copy(
             update={
-                "document_status": self.base_state.document_status.model_copy(
+                "doc_completeness": self.base_state.doc_completeness.model_copy(
                     update={"gst": True}
                 )
             },
@@ -68,8 +66,8 @@ class TestRewardLogic(unittest.TestCase):
         prev_state = self.base_state.model_copy(deep=True)
         new_state = prev_state.model_copy(
             update={
-                "risk_flags": prev_state.risk_flags.model_copy(
-                    update={"circular_trading": True}
+                "risk_signals": prev_state.risk_signals.model_copy(
+                    update={"circular_trading_flag": 1.0}
                 )
             },
             deep=True
@@ -81,7 +79,7 @@ class TestRewardLogic(unittest.TestCase):
     def test_litigation_risk_detection(self):
         prev_state = self.base_state.model_copy(deep=True)
         new_state = prev_state.model_copy(
-            update={"risk_flags": prev_state.risk_flags.model_copy(
+            update={"risk_signals": prev_state.risk_signals.model_copy(
                 update={"litigation_risk": 0.9}
             )}, deep=True
         )
@@ -94,7 +92,7 @@ class TestRewardLogic(unittest.TestCase):
     def test_promoter_risk_detection(self):
         prev_state = self.base_state.model_copy(deep=True)
         new_state = prev_state.model_copy(
-            update={"risk_flags": prev_state.risk_flags.model_copy(
+            update={"risk_signals": prev_state.risk_signals.model_copy(
                 update={"promoter_risk": 0.8}
             )}, deep=True
         )
@@ -145,8 +143,8 @@ class TestRewardLogic(unittest.TestCase):
     def test_revenue_mismatch_detection(self):
         prev_state = self.base_state.model_copy(deep=True)
         new_state = prev_state.model_copy(
-            update={"risk_flags": prev_state.risk_flags.model_copy(
-                update={"revenue_mismatch": True}
+            update={"financial_ratios": prev_state.financial_ratios.model_copy(
+                update={"revenue_mismatch_flag": True}
             )}, deep=True
         )
         reward = calculate_reward(
@@ -157,8 +155,8 @@ class TestRewardLogic(unittest.TestCase):
 
     def test_reward_not_awarded_for_pre_existing_risk_flag(self):
         prev_state = self.base_state.model_copy(
-            update={"risk_flags": self.base_state.risk_flags.model_copy(
-                update={"circular_trading": True}
+            update={"risk_signals": self.base_state.risk_signals.model_copy(
+                update={"circular_trading_flag": 1.0}
             )}, deep=True
         )
         new_state = prev_state.model_copy(deep=True)

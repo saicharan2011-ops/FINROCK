@@ -6,20 +6,28 @@ import { useSession } from '../../../hooks/useSession';
 
 const LiveAgentDark = () => {
     const { toggleTheme } = useTheme();
-    const { sessionId } = useSession();
-    const { logs, metrics, startAnalysis } = useAnalysis(sessionId);
+    const { sessionId, loading: sessionLoading, error: sessionError, refreshSession } = useSession();
+    const { logs, metrics, startAnalysis, canStart, socketError, socketState } = useAnalysis(sessionId);
 
     const location = useLocation();
     const autoStartAttemptedRef = useRef(false);
+    const unknownSessionRecoveredRef = useRef(false);
     const startAnalysisRef = useRef(startAnalysis);
+    const refreshSessionRef = useRef(refreshSession);
 
     // Keep the latest callback without re-running the auto-start effect.
     useEffect(() => {
         startAnalysisRef.current = startAnalysis;
     }, [startAnalysis]);
+    useEffect(() => {
+        refreshSessionRef.current = refreshSession;
+    }, [refreshSession]);
 
     useEffect(() => {
         autoStartAttemptedRef.current = false;
+    }, [sessionId]);
+    useEffect(() => {
+        unknownSessionRecoveredRef.current = false;
     }, [sessionId]);
 
     useEffect(() => {
@@ -29,6 +37,14 @@ const LiveAgentDark = () => {
             startAnalysisRef.current();
         }
     }, [location.search, sessionId]);
+
+    useEffect(() => {
+        const msg = (socketError || '').toLowerCase();
+        if (msg.includes('unknown session_id') && !unknownSessionRecoveredRef.current) {
+            unknownSessionRecoveredRef.current = true;
+            refreshSessionRef.current();
+        }
+    }, [socketError]);
 
     return (
         <div className="bg-[#0e0e0e] text-on-surface font-body min-h-screen flex flex-col overflow-hidden h-screen selection:bg-primary selection:text-black">
@@ -65,7 +81,7 @@ const LiveAgentDark = () => {
             <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-20">
                 <div className="flex justify-between items-center w-full px-8 h-full max-w-[1920px] mx-auto">
                     <div className="flex items-center gap-12">
-                        <span className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">KINETIC VAULT</span>
+                        <span className="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">FINROCK</span>
                         <div className="hidden md:flex items-center gap-8 font-headline tracking-tight uppercase text-[10px] tracking-widest font-black">
                             <Link className="text-zinc-400 hover:text-zinc-100 transition-colors" to="/">Markets</Link>
                             <Link className="text-[#85f1ca] border-b-2 border-[#85f1ca] pb-1" to="/live-agent">Analysis</Link>
@@ -81,10 +97,10 @@ const LiveAgentDark = () => {
                         </div>
                         <button
                             onClick={() => startAnalysis()}
-                            disabled={!sessionId}
-                            className={`bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_20px_rgba(133,241,202,0.3)] transition-all duration-300 active:scale-95 ${!sessionId ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={!sessionId || !canStart || sessionLoading}
+                            className={`bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_20px_rgba(133,241,202,0.3)] transition-all duration-300 active:scale-95 ${(!sessionId || !canStart || sessionLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            Run Analysis
+                            {sessionLoading ? 'Preparing Session...' : !canStart ? 'Connecting...' : 'Run Analysis'}
                         </button>
                     </div>
                 </div>
@@ -125,12 +141,24 @@ const LiveAgentDark = () => {
 
             {/* Main Content Canvas */}
             <main className="pl-64 pt-20 h-screen overflow-hidden">
+                {(sessionError || socketError) && (
+                    <div className="px-8 pt-4">
+                        <div className="rounded-xl border border-red-500/40 bg-red-900/20 text-red-200 px-4 py-3 text-sm">
+                            {sessionError || socketError}
+                        </div>
+                    </div>
+                )}
                 <div className="h-full flex gap-px bg-white/5">
                     {/* LEFT COLUMN: Agent Actions (Live Log) */}
                     <section className="w-[30%] bg-surface-container-low p-6 flex flex-col">
                         <div className="mb-6">
                             <h2 className="text-xs font-bold tracking-[0.2em] text-zinc-500 uppercase mb-1">System Orchestration</h2>
-                            <h1 className="font-headline text-2xl font-bold">Agent Actions</h1>
+                            <h1 className="font-headline text-2xl font-bold">
+                                Agent Actions
+                                <span className="ml-3 text-xs font-medium text-zinc-500 uppercase tracking-widest">
+                                    {sessionLoading ? 'Session Initializing' : socketState === 'open' ? 'Live' : socketState === 'error' ? 'Connection Error' : 'Connecting'}
+                                </span>
+                            </h1>
                         </div>
                         <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
                             {logs.map((log, i) => (
@@ -227,7 +255,7 @@ const LiveAgentDark = () => {
                                 { label: 'Circular', val: metrics.gauges?.circular || 0, color: 'text-primary' },
                                 { label: 'Shell', val: metrics.gauges?.shell || 0, color: 'text-secondary' },
                                 { label: 'Lien', val: metrics.gauges?.lien || 0, color: 'text-tertiary' },
-                                { label: 'Fraud', val: metrics.gauges?.fraud || 0, color: 'text-error' },
+                                { label: 'PEP', val: metrics.gauges?.pep || 0, color: 'text-error' },
                             ].map((gauge, i) => (
                                 <div key={i} className="flex flex-col items-center">
                                     <div className="relative w-28 h-28">
