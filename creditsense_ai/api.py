@@ -9,7 +9,8 @@ from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 # Lazy imports — these may fail if optional deps are missing.
@@ -52,6 +53,10 @@ app.add_middleware(
 
 DATA_DIR = Path(__file__).resolve().parent / "_data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+FRONTEND_DIST = Path(__file__).resolve().parent.parent / "creditsense-frontend" / "dist"
+
+if (FRONTEND_DIST / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="frontend-assets")
 
 
 class CreateSessionRequest(BaseModel):
@@ -136,6 +141,9 @@ STORE = _SessionStore()
 
 @app.get("/")
 async def root():
+    index = FRONTEND_DIST / "index.html"
+    if index.exists():
+        return FileResponse(index)
     return {"message": "CreditSense AI Backend Operational", "status": "online"}
 
 
@@ -450,6 +458,22 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
             await websocket.close()
         except Exception:
             pass
+
+
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_spa(full_path: str):
+    if full_path.startswith(("api/", "ws/", "docs", "redoc", "openapi.json")):
+        raise HTTPException(status_code=404, detail="Not found")
+
+    target = FRONTEND_DIST / full_path
+    if full_path and target.exists() and target.is_file():
+        return FileResponse(target)
+
+    index = FRONTEND_DIST / "index.html"
+    if index.exists():
+        return FileResponse(index)
+
+    raise HTTPException(status_code=404, detail="Frontend build not found")
 
 
 if __name__ == "__main__":

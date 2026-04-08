@@ -1,7 +1,10 @@
 import axios from 'axios'
 
-export const BACKEND_BASE_URL =
-  import.meta.env.VITE_BACKEND_URL?.trim() || 'http://localhost:8000'
+const explicitBackend = import.meta.env.VITE_BACKEND_URL?.trim()
+const inferredOrigin =
+  typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000'
+
+export const BACKEND_BASE_URL = explicitBackend || inferredOrigin
 
 export const api = axios.create({
   baseURL: BACKEND_BASE_URL,

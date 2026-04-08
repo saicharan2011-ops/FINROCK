@@ -13,3 +13,4 @@ push.log
 push_err.txt
 upload.py
 *.gsd
+creditsense_ai/_data/
