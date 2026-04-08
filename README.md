@@ -1,5 +1,16 @@
 
 
+---
+title: CreditSense AI
+emoji: 🧾
+colorFrom: green
+colorTo: gray
+sdk: docker
+app_port: 8501
+pinned: false
+---
+
+
 <div align="center">
 
 <!-- ANIMATED HEADER -->
