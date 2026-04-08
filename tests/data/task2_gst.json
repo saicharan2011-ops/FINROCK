@@ -1,0 +1,11 @@
+{
+  "gstin": "29SHARMA99",
+  "total_revenue": 15608000,
+  "total_tax_paid": 2800000,
+  "input_tax_credit": 2500000,
+  "b2b_invoices": [
+    {"invoice_no": "F001", "buyer_gstin": "29COMPB123", "taxable_value": 5000000},
+    {"invoice_no": "F002", "buyer_gstin": "29COMPC456", "taxable_value": 5200000},
+    {"invoice_no": "F003", "buyer_gstin": "29SHARMA99", "taxable_value": 5408000}
+  ]
+}

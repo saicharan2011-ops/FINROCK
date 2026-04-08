@@ -1,0 +1,15 @@
+node_modules
+__pycache__
+.env
+.DS_Store
+dist
+build
+.svelte-kit
+.next
+.nuxt
+coverage
+*.log
+push.log
+push_err.txt
+upload.py
+*.gsd

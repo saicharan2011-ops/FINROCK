@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Agent View | CreditSense AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .scan-line-bg {
+            background-image: linear-gradient(to bottom, transparent 50%, rgba(1, 45, 29, 0.02) 50%);
+            background-size: 100% 4px;
+        }
+        .arc-gauge {
+            stroke-dasharray: 100 100;
+            stroke-linecap: round;
+        }
+        .tonal-shift-bottom {
+            box-shadow: 0 10px 30px -15px rgba(1, 45, 29, 0.08);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#5a302f",
+                      "surface-dim": "#d9dadb",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#331111",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#ffdad8",
+                      "primary-fixed-dim": "#a5d0b9",
+                      "surface-container-highest": "#e1e3e4",
+                      "surface-variant": "#e1e3e4",
+                      "inverse-on-surface": "#f0f1f2",
+                      "outline": "#717973",
+                      "on-surface-variant": "#414844",
+                      "surface-bright": "#f8f9fa",
+                      "on-secondary-fixed": "#092012",
+                      "primary-container": "#1b4332",
+                      "on-secondary-fixed-variant": "#354c3b",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary": "#4c6452",
+                      "tertiary-fixed-dim": "#f5b7b4",
+                      "secondary-container": "#cce6d0",
+                      "outline-variant": "#c1c8c2",
+                      "on-primary-fixed": "#002114",
+                      "background": "#f8f9fa",
+                      "secondary-fixed-dim": "#b3cdb7",
+                      "inverse-primary": "#a5d0b9",
+                      "surface-tint": "#3f6653",
+                      "surface-container-low": "#f3f4f5",
+                      "inverse-surface": "#2e3132",
+                      "surface-container": "#edeeef",
+                      "on-surface": "#191c1d",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#86af99",
+                      "primary": "#012d1d",
+                      "surface": "#f8f9fa",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#d29895",
+                      "on-secondary-container": "#506856",
+                      "tertiary": "#401b1b",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#673a39",
+                      "surface-container-high": "#e7e8e9",
+                      "primary-fixed": "#c1ecd4",
+                      "on-background": "#191c1d",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#274e3d",
+                      "secondary-fixed": "#cee9d3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Space Grotesk"],
+                      "body": ["Manrope"],
+                      "label": ["Space Grotesk"]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background font-body text-on-surface antialiased scan-line-bg min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-emerald-950/80 backdrop-blur-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)] tonal-shift-bottom">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="text-xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50 font-['Space_Grotesk']">CreditSense AI</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-emerald-800/60 dark:text-emerald-200/60 font-medium font-['Space_Grotesk'] tracking-tight hover:text-emerald-900 transition-colors" href="#">Home</a>
+<a class="text-emerald-900 dark:text-emerald-50 font-bold border-b-2 border-emerald-900 pb-1 font-['Space_Grotesk'] tracking-tight" href="#">Dashboard</a>
+<a class="text-emerald-800/60 dark:text-emerald-200/60 font-medium font-['Space_Grotesk'] tracking-tight hover:text-emerald-900 transition-colors" href="#">Audit</a>
+<a class="text-emerald-800/60 dark:text-emerald-200/60 font-medium font-['Space_Grotesk'] tracking-tight hover:text-emerald-900 transition-colors" href="#">Insights</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label font-bold text-sm hover:opacity-90 transition-all">Run Analysis</button>
+</div>
+</nav>
+<main class="mt-24 px-8 max-w-7xl mx-auto w-full flex-grow pb-20">
+<!-- Live Agent Header Area -->
+<header class="flex justify-between items-end mb-10">
+<div class="space-y-1">
+<span class="font-label text-xs uppercase tracking-[0.2em] text-primary/60 font-bold">Neural Monitor</span>
+<h1 class="font-headline text-4xl font-bold tracking-tighter text-primary">Live Agent View</h1>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-lowest px-4 py-2 rounded-lg flex items-center gap-3 border border-outline-variant/10">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label text-xs font-bold uppercase">System: Operational</span>
+</div>
+</div>
+</header>
+<!-- 3-Column Layout -->
+<div class="grid grid-cols-12 gap-8 mb-12">
+<!-- Column 1: Agent Actions Log -->
+<section class="col-span-12 lg:col-span-4 space-y-6">
+<div class="flex items-center justify-between mb-2">
+<h2 class="font-headline text-xl font-bold tracking-tight">Agent Actions</h2>
+<span class="material-symbols-outlined text-primary/40 text-sm">history</span>
+</div>
+<div class="space-y-4">
+<!-- Running Task -->
+<div class="bg-primary-container p-5 rounded-xl shadow-sm border-l-4 border-primary ring-1 ring-white/10">
+<div class="flex justify-between items-start mb-3">
+<span class="font-label text-[10px] uppercase font-black text-on-primary-container/80 tracking-widest">Active Process</span>
+<span class="material-symbols-outlined text-on-primary-container animate-spin text-sm">sync</span>
+</div>
+<h3 class="font-headline font-bold text-on-primary-container mb-1">Cross-Reference KYC</h3>
+<p class="font-body text-xs text-on-primary-container/70 leading-relaxed">Agent is currently validating ultimate beneficial owners against global sanctions lists.</p>
+</div>
+<!-- Flagged Task -->
+<div class="bg-error-container/40 p-5 rounded-xl border-l-4 border-error">
+<div class="flex justify-between items-start mb-3">
+<span class="font-label text-[10px] uppercase font-black text-on-error-container tracking-widest">Manual Review Required</span>
+<span class="material-symbols-outlined text-error text-sm" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<h3 class="font-headline font-bold text-on-error-container mb-1">Income Discrepancy</h3>
+<p class="font-body text-xs text-on-error-container/70 leading-relaxed">Reported $2.4M revenue does not align with automated bank statement OCR values.</p>
+</div>
+<!-- Done Task -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border-l-4 border-secondary-fixed shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<span class="font-label text-[10px] uppercase font-black text-secondary/60 tracking-widest">Verified</span>
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+</div>
+<h3 class="font-headline font-bold text-primary mb-1">Company Registration</h3>
+<p class="font-body text-xs text-on-surface-variant leading-relaxed">Entity "Nexus Global" verified via Delaware Secretary of State portal.</p>
+</div>
+</div>
+</section>
+<!-- Column 2: Live Metrics & Ratios -->
+<section class="col-span-12 lg:col-span-4 space-y-8">
+<div class="bg-surface-container-low p-6 rounded-xl space-y-6">
+<h2 class="font-headline text-xl font-bold tracking-tight">Live Metrics</h2>
+<!-- Completeness Bars -->
+<div class="space-y-5">
+<div class="space-y-2">
+<div class="flex justify-between font-label text-[10px] uppercase font-bold text-primary/60">
+<span>Document Integrity</span>
+<span>92%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between font-label text-[10px] uppercase font-bold text-primary/60">
+<span>Financial Transparency</span>
+<span>68%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 68%"></div>
+</div>
+</div>
+</div>
+<!-- Financial Ratios Table -->
+<div class="pt-4">
+<table class="w-full text-left">
+<thead>
+<tr class="font-label text-[10px] uppercase text-primary/40 tracking-wider">
+<th class="pb-3 font-bold">Metric</th>
+<th class="pb-3 font-bold text-right">Value</th>
+<th class="pb-3 font-bold text-right">Trend</th>
+</tr>
+</thead>
+<tbody class="font-headline text-sm font-medium">
+<tr class="border-t border-outline-variant/10">
+<td class="py-3">Revenue</td>
+<td class="py-3 text-right">$4.2M</td>
+<td class="py-3 text-right text-secondary-fixed-dim"><span class="material-symbols-outlined text-xs align-middle">trending_up</span></td>
+</tr>
+<tr class="border-t border-outline-variant/10">
+<td class="py-3">EBITDA</td>
+<td class="py-3 text-right">$840K</td>
+<td class="py-3 text-right text-secondary-fixed-dim"><span class="material-symbols-outlined text-xs align-middle">trending_up</span></td>
+</tr>
+<tr class="border-t border-outline-variant/10">
+<td class="py-3">Debt/Equity</td>
+<td class="py-3 text-right">0.42</td>
+<td class="py-3 text-right text-error/60"><span class="material-symbols-outlined text-xs align-middle">trending_down</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Column 3: Risk Assessment Gauges -->
+<section class="col-span-12 lg:col-span-4 space-y-6">
+<div class="flex justify-between items-center">
+<h2 class="font-headline text-xl font-bold tracking-tight">Risk Assessment</h2>
+<span class="bg-error/10 text-error px-3 py-1 rounded-full font-label text-[10px] font-black uppercase tracking-tighter">High Variance</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Gauge Grid -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center">
+<div class="relative w-20 h-20 mx-auto mb-2">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="stroke-surface-container-highest fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-width="3"></path>
+<path class="stroke-error fill-none arc-gauge" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-dasharray="85, 100" stroke-width="3"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center font-label text-sm font-bold">85%</span>
+</div>
+<span class="font-label text-[10px] uppercase font-bold text-primary/60 leading-tight block">Circular Trading</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center">
+<div class="relative w-20 h-20 mx-auto mb-2">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="stroke-surface-container-highest fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-width="3"></path>
+<path class="stroke-secondary fill-none arc-gauge" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-dasharray="12, 100" stroke-width="3"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center font-label text-sm font-bold">12%</span>
+</div>
+<span class="font-label text-[10px] uppercase font-bold text-primary/60 leading-tight block">Shell Network</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center">
+<div class="relative w-20 h-20 mx-auto mb-2">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="stroke-surface-container-highest fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-width="3"></path>
+<path class="stroke-primary fill-none arc-gauge" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-dasharray="44, 100" stroke-width="3"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center font-label text-sm font-bold">44%</span>
+</div>
+<span class="font-label text-[10px] uppercase font-bold text-primary/60 leading-tight block">Lien Exposure</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center">
+<div class="relative w-20 h-20 mx-auto mb-2">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="stroke-surface-container-highest fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-width="3"></path>
+<path class="stroke-secondary fill-none arc-gauge" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-dasharray="08, 100" stroke-width="3"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center font-label text-sm font-bold">08%</span>
+</div>
+<span class="font-label text-[10px] uppercase font-bold text-primary/60 leading-tight block">PEP Screening</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Section: Blockchain Activity -->
+<section class="bg-white/40 backdrop-blur-md p-8 rounded-2xl border border-white/50 shadow-sm overflow-hidden">
+<div class="flex items-center gap-4 mb-8">
+<div class="p-3 bg-primary text-on-primary rounded-lg">
+<span class="material-symbols-outlined block">database</span>
+</div>
+<div>
+<h2 class="font-headline text-2xl font-bold tracking-tight">Blockchain Activity</h2>
+<p class="font-label text-xs font-bold text-primary/50 uppercase tracking-widest">Real-time Transaction Ledger Analysis</p>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="font-label text-xs uppercase text-primary/40 border-b border-outline-variant/10">
+<th class="py-4 font-bold">Block</th>
+<th class="py-4 font-bold">TX Hash</th>
+<th class="py-4 font-bold">Origin</th>
+<th class="py-4 font-bold">Protocol</th>
+<th class="py-4 font-bold text-right">Value</th>
+</tr>
+</thead>
+<tbody class="font-body text-sm font-medium">
+<tr class="hover:bg-emerald-50/50 transition-colors">
+<td class="py-4 text-primary font-bold">#18,442,109</td>
+<td class="py-4 font-label text-[10px] opacity-60">0x74a...f92a</td>
+<td class="py-4">Treasury V3</td>
+<td class="py-4">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase">ERC-20</span>
+</td>
+<td class="py-4 text-right font-headline font-bold text-primary">12.44 ETH</td>
+</tr>
+<tr class="hover:bg-emerald-50/50 transition-colors border-t border-outline-variant/10">
+<td class="py-4 text-primary font-bold">#18,442,108</td>
+<td class="py-4 font-label text-[10px] opacity-60">0xac2...b31e</td>
+<td class="py-4">External Wallet</td>
+<td class="py-4">
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-[10px] font-bold uppercase">UNISWAP</span>
+</td>
+<td class="py-4 text-right font-headline font-bold text-primary">50,000 USDC</td>
+</tr>
+<tr class="hover:bg-emerald-50/50 transition-colors border-t border-outline-variant/10">
+<td class="py-4 text-primary font-bold">#18,442,104</td>
+<td class="py-4 font-label text-[10px] opacity-60">0x3e1...c288</td>
+<td class="py-4">Nexus Disbursement</td>
+<td class="py-4">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase">ERC-20</span>
+</td>
+<td class="py-4 text-right font-headline font-bold text-primary">8.00 ETH</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 mt-auto bg-emerald-50 dark:bg-emerald-900/20">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-6">
+<div class="font-['Space_Grotesk'] font-bold text-emerald-900">CreditSense AI</div>
+<p class="font-['Manrope'] text-sm antialiased text-emerald-800/70 dark:text-emerald-300/70">© 2024 CreditSense AI. Precision in Financial Engineering.</p>
+<div class="flex gap-6">
+<a class="font-['Manrope'] text-sm antialiased text-emerald-800/70 dark:text-emerald-300/70 hover:text-emerald-900 transition-all" href="#">Privacy</a>
+<a class="font-['Manrope'] text-sm antialiased text-emerald-800/70 dark:text-emerald-300/70 hover:text-emerald-900 transition-all" href="#">Terms</a>
+<a class="font-['Manrope'] text-sm antialiased text-emerald-800/70 dark:text-emerald-300/70 hover:text-emerald-900 transition-all" href="#">Security</a>
+<a class="font-['Manrope'] text-sm antialiased text-emerald-800/70 dark:text-emerald-300/70 hover:text-emerald-900 transition-all" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>

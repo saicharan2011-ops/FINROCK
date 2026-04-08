@@ -1,0 +1,41 @@
+from reportlab.pdfgen import canvas
+import os
+
+os.makedirs("test_data", exist_ok=True)
+
+c = canvas.Canvas("test_data/task3_high_risk.pdf")
+c.setFont("Helvetica-Bold", 14)
+c.drawString(100, 780, "Phoenix Steel Pvt Ltd Annual Report")
+c.setFont("Helvetica", 11)
+c.drawString(100, 740, "The account has been classified as NPA.")
+c.drawString(100, 715, "DRT proceedings have been initiated.")
+c.drawString(100, 690, "NCLT winding up petition filed in Mumbai.")
+c.drawString(100, 665, "Pledge invoked on promoter shareholding.")
+c.drawString(100, 640, "Company filed for OTS with lead bank.")
+c.drawString(100, 615, "Plant shutdown since March 2024.")
+c.drawString(100, 590, "Legal notice received from 3 creditors.")
+c.drawString(100, 565, "Cheque dishonour reported in Q3.")
+c.drawString(100, 540, "Insolvency petition under consideration.")
+c.save()
+print("Created: test_data/task3_high_risk.pdf")
+
+c = canvas.Canvas("test_data/task1_clean_company.pdf")
+c.setFont("Helvetica-Bold", 14)
+c.drawString(100, 780, "Greenfield Agro Pvt Ltd Annual Report")
+c.setFont("Helvetica", 11)
+c.drawString(100, 740, "Revenue: Rs. 32 crore. Net profit: Rs. 4.2 crore.")
+c.drawString(100, 715, "No legal proceedings are pending.")
+c.drawString(100, 690, "All statutory payments are up to date.")
+c.save()
+print("Created: test_data/task1_clean_company.pdf")
+
+c = canvas.Canvas("test_data/task2_medium_risk.pdf")
+c.setFont("Helvetica-Bold", 14)
+c.drawString(100, 780, "Sunrise Textiles Ltd Annual Report")
+c.setFont("Helvetica", 11)
+c.drawString(100, 740, "The company has received a legal notice.")
+c.drawString(100, 715, "One account is overdue by 90 days.")
+c.save()
+print("Created: test_data/task2_medium_risk.pdf")
+
+print("Done. All 3 test PDFs are in your test_data folder.")

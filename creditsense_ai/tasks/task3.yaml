@@ -1,0 +1,21 @@
+goal: Test full synthesis of qualitative and quantitative data.
+company_name: Global Textiles Corp
+sector: "Textiles and Apparel"
+loan_amount: 45000000
+available_documents:
+  - tests/data/task3_gst.json
+  - tests/data/task3_bank.csv
+  - tests/data/task3_annual.txt
+ground_truth_label: PARTIAL
+max_steps: 15
+planted_anomalies:
+  - factory_capacity_underutilization
+  - sector_headwinds_textiles
+  - promoter_litigation_pending
+qualitative_input: "Site Visit Note: Factory operating at 40% capacity. Machinery idle. High inventory build-up. Recommendation: REJECT or PARTIAL."
+scoring_weights:
+  correct_recommendation: 0.40
+  circular_detected: 0.10
+  sector_headwind_flagged: 0.15
+  promoter_risk_flagged: 0.20
+  revenue_mismatch_flagged: 0.15

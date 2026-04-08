@@ -1,0 +1,43 @@
+name: CreditAppraisalEnv-v1
+version: 1.0.0
+entry_point: creditsense_ai.env.CreditAppraisalEnv:CreditAppraisalEnv
+description: An autonomous RL environment for Indian corporate lending appraisal. The agent navigates a POMDP to collect documents, perform deep-dive risk research (Circular Trading, Litigation), and generate an explainable Credit Appraisal Memo (CAM).
+
+spaces:
+  observation_space:
+    type: Box
+    shape: [17]
+    range: [0.0, 1.0]
+    dtype: float32
+    # 0 - 4: Financial Ratios (DSCR, D/E, Current, Interest Coverage, Margin)
+    # 5 - 9: Doc Status Binary flags (GST, ITR, Bank Stmt, Annual Rpt, MCA)
+    # 10 - 14: Risk Scores (Circular Trading, Litigation, Promoter, Mismatch, Sector)
+    # 15: Insight Score (Derived from site visits/interviews)
+    # 16: Step Percent (current_step / max_steps)
+  action_space:
+    type: Discrete
+    n: 12
+
+reward_range: [-1.5, 2.0]
+
+tasks:
+  task_1:
+    name: Ratio Extraction & Validation
+    difficulty: Easy
+    max_steps: 10
+    success_threshold: 0.8
+    description: Extract and cross-validate 5 key financial ratios from GST and Bank statements.
+    
+  task_2:
+    name: Anomalous Pattern Detection
+    difficulty: Medium
+    max_steps: 15
+    success_threshold: 0.85
+    description: Detect hidden circular trading patterns and revenue mismatches using graph-based analysis.
+    
+  task_3:
+    name: Full CAM Generation & Decision
+    difficulty: Hard
+    max_steps: 20
+    success_threshold: 0.9
+    description: End-to-end appraisal including site-visit synthesis and final recommendation logged to blockchain.

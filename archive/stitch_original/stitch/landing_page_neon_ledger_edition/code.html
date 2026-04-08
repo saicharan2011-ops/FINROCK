@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-dim": "#d7383b",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#00d2fc",
+                        "surface-bright": "#2c2c2c",
+                        "surface-variant": "#262626",
+                        "tertiary-fixed": "#00d2fc",
+                        "on-primary-fixed": "#004533",
+                        "secondary-dim": "#36edd0",
+                        "secondary": "#4dfcde",
+                        "surface-container-highest": "#262626",
+                        "on-secondary": "#005d50",
+                        "on-tertiary-fixed": "#002c37",
+                        "tertiary-fixed-dim": "#00c3eb",
+                        "inverse-surface": "#fcf8f8",
+                        "surface-container-low": "#131313",
+                        "on-tertiary-container": "#004352",
+                        "tertiary-dim": "#00c3eb",
+                        "surface-container-lowest": "#000000",
+                        "secondary-fixed": "#4dfcde",
+                        "error-container": "#9f0519",
+                        "surface-tint": "#85f1ca",
+                        "primary-fixed-dim": "#76e2bc",
+                        "surface-container-high": "#201f1f",
+                        "outline": "#777575",
+                        "surface-container": "#1a1919",
+                        "on-secondary-container": "#ddfff5",
+                        "on-secondary-fixed": "#00483e",
+                        "background": "#0e0e0e",
+                        "surface": "#0e0e0e",
+                        "primary-fixed": "#85f1ca",
+                        "outline-variant": "#494847",
+                        "surface-dim": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#004c5d",
+                        "secondary-container": "#006b5c",
+                        "on-error-container": "#ffa8a3",
+                        "on-secondary-fixed-variant": "#006859",
+                        "on-error": "#490006",
+                        "on-surface-variant": "#adaaaa",
+                        "primary-dim": "#76e2bc",
+                        "inverse-primary": "#006c52",
+                        "tertiary": "#6cddff",
+                        "on-primary-container": "#00291d",
+                        "on-tertiary": "#004c5d",
+                        "secondary-fixed-dim": "#36edd0",
+                        "on-primary": "#005a43",
+                        "error": "#ff716c",
+                        "primary-container": "#43b38f",
+                        "primary": "#85f1ca",
+                        "on-background": "#ffffff",
+                        "on-primary-fixed-variant": "#00644c",
+                        "inverse-on-surface": "#565554"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0e0e0e;
+            color: #ffffff;
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(38, 38, 38, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(133, 241, 202, 0.15);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #85f1ca 0%, #43b38f 100%);
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(133, 241, 202, 0.3);
+        }
+        .kinetic-bg {
+            background-image: radial-gradient(circle at 20% 30%, rgba(133, 241, 202, 0.05) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 70%, rgba(108, 221, 255, 0.05) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-background selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+<div class="flex justify-between items-center w-full px-8 h-20 max-w-[1920px] mx-auto">
+<div class="text-2xl font-bold tracking-tighter text-[#85f1ca] font-['Space_Grotesk']">
+                KINETIC VAULT
+            </div>
+<div class="hidden md:flex items-center space-x-10 font-['Space_Grotesk'] tracking-tight">
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Markets</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Analysis</a>
+<a class="text-[#85f1ca] border-b-2 border-[#85f1ca] pb-1" href="#">Portfolio</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Reports</a>
+</div>
+<button class="primary-gradient text-on-primary px-8 py-3 rounded-full font-bold font-headline tracking-tight hover:scale-105 active:scale-95 transition-all neon-glow">
+                Run Analysis
+            </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-44 pb-24 kinetic-bg overflow-hidden">
+<div class="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7 z-10">
+<div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-label text-[10px] uppercase tracking-widest mb-6">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>Live Institutional Engine</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-headline font-bold leading-[0.95] tracking-tighter mb-8 text-on-surface">
+                    Appraise Any Corporate <br/>
+<span class="text-transparent bg-clip-text primary-gradient">Loan in 40 Seconds.</span>
+</h1>
+<p class="text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed font-body">
+                    Harness high-stakes AI to stress-test debt instruments with the kinetic energy of global markets. Secure your assets in our digital vault.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="primary-gradient text-on-primary px-10 py-5 rounded-full text-lg font-extrabold font-headline hover:scale-105 transition-all neon-glow uppercase tracking-tighter">
+                        Get Started
+                    </button>
+<button class="glass-card text-on-surface px-10 py-5 rounded-full text-lg font-bold font-headline hover:bg-surface-variant/40 transition-all border border-outline-variant/20">
+                        View Demo
+                    </button>
+</div>
+</div>
+<div class="lg:col-span-5 relative flex justify-center">
+<!-- 3D Credit Card/Data Stream Imagery -->
+<div class="relative w-full aspect-square max-w-md">
+<div class="absolute inset-0 bg-primary/20 blur-[120px] rounded-full"></div>
+<img alt="3D credit card floating in a digital stream of glowing neon green binary data and financial charts" class="relative z-10 w-full h-full object-contain transform rotate-12" data-alt="a stylized 3D glowing translucent credit card suspended in a vibrant stream of neon green digital data and matrix-like financial metrics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA7YNMtNyhe2okYKoKTzjaD5j_TTSEwAKXqgFj2e9lOqKqxgbELTl4NwQSx2uAXzJAk0wDVtIwrx9L7Hj1Sex2ePIISCpWGBajv-uVa3gLD8cX5kAYVLOWKp6ZjegrwM_k9fpxS6jHlQLnK6H6lX9UKoRwptU1XfFzvRHRk7mcH5kf7BGSaoxAOdYMHXXt4RTAcnd7Ab2RclAlqkdZMYrsXqegCSsXKqoQV_oLKyDtN5yKl_icy7uZRdFDPo8qC6Xro0oXlWxtF3E"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Banner -->
+<section class="bg-surface-container-low py-12">
+<div class="max-w-7xl mx-auto px-8 flex flex-wrap justify-between gap-12">
+<div class="flex flex-col">
+<span class="text-primary font-headline text-4xl font-bold">$4.2B+</span>
+<span class="text-zinc-500 font-label text-[10px] uppercase tracking-[0.2em] mt-1">Portfolio Under Management</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/10 pl-12">
+<span class="text-primary font-headline text-4xl font-bold">99.9%</span>
+<span class="text-zinc-500 font-label text-[10px] uppercase tracking-[0.2em] mt-1">Underwriting Accuracy</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/10 pl-12">
+<span class="text-primary font-headline text-4xl font-bold">40s</span>
+<span class="text-zinc-500 font-label text-[10px] uppercase tracking-[0.2em] mt-1">Mean Analysis Time</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/10 pl-12">
+<span class="text-primary font-headline text-4xl font-bold">500+</span>
+<span class="text-zinc-500 font-label text-[10px] uppercase tracking-[0.2em] mt-1">Institutional Clients</span>
+</div>
+</div>
+</section>
+<!-- Exposing the Invisible (Fraud Detection) -->
+<section class="py-32 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5 order-2 lg:order-1">
+<div class="grid grid-cols-2 gap-4">
+<div class="glass-card p-6 rounded-xl aspect-square flex flex-col justify-end transform -rotate-3 hover:rotate-0 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary text-4xl mb-4" data-icon="shield">shield</span>
+<h4 class="text-xl font-headline font-bold">Encrypted Flow</h4>
+<p class="text-xs text-on-surface-variant mt-2">Zero-knowledge proofs for every transaction.</p>
+</div>
+<div class="glass-card p-6 rounded-xl aspect-square flex flex-col justify-end translate-y-8 transform rotate-6 hover:rotate-0 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary text-4xl mb-4" data-icon="security_update_good">security_update_good</span>
+<h4 class="text-xl font-headline font-bold">Biometric IDs</h4>
+<p class="text-xs text-on-surface-variant mt-2">Identity verification in milliseconds.</p>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 order-1 lg:order-2">
+<span class="text-secondary-fixed font-label text-xs tracking-widest mb-4 block">SECURITY FIRST</span>
+<h2 class="text-5xl md:text-6xl font-headline font-bold tracking-tighter mb-8">Exposing the Invisible.</h2>
+<p class="text-xl text-on-surface-variant leading-relaxed mb-8">
+                        Our proprietary fraud detection engine doesn't just look for anomalies; it maps the kinetic relationships between entities to reveal hidden risks before they materialize.
+                    </p>
+<ul class="space-y-6">
+<li class="flex items-start space-x-4">
+<span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mt-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span>
+</span>
+<div>
+<h5 class="font-bold text-lg">Behavioral Fingerprinting</h5>
+<p class="text-on-surface-variant text-sm">Identifying synthetic identities through rhythmic patterns.</p>
+</div>
+</li>
+<li class="flex items-start space-x-4">
+<span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mt-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span>
+</span>
+<div>
+<h5 class="font-bold text-lg">Graph Analytics</h5>
+<p class="text-on-surface-variant text-sm">Uncovering shell company networks instantly.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Autonomous Underwriting Flow (Bento Grid) -->
+<section class="py-32 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-8">
+<div class="text-center mb-20">
+<h2 class="text-5xl font-headline font-bold tracking-tighter mb-4">Autonomous Underwriting Flow</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Seamless, straight-through processing for the most complex institutional loans.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Large Bento Card -->
+<div class="md:col-span-2 bg-surface-container-highest rounded-xl p-8 flex flex-col justify-between h-[400px] overflow-hidden group">
+<div>
+<h3 class="text-3xl font-headline font-bold mb-4">Real-time Risk Simulation</h3>
+<p class="text-on-surface-variant max-w-md">Our kinetic engine runs 10,000+ Monte Carlo simulations simultaneously to ensure your LTV stays within bounds.</p>
+</div>
+<div class="relative h-48 mt-8">
+<img alt="Dynamic financial dashboard showing risk heatmap with neon green pulses and sleek glass panels" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-700" data-alt="a professional dark-themed financial dashboard with glowing green pulse indicators and overlapping frosted glass charts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDj2EXaDcwdIvubbmgmXmlKPPOt3jZWNsZtGnVURTwjC5mHtrOSftDRC-CfoT-xPxc1JolnA-irwGM4AND0Y8C9Jweqi9Zim2wT8ugymzDfz3Tte6-mKotz6G4_sG3DmzMd8IOSFZ6OscIqm5_HeVbW-HO4LHzcDbzHXBIiZqxj7pvvpVslCF6xmpErCE4UjziLGE-iOsLkJni-1OqfHeVEPQvNqVXEsEb8GaURFUL2D2q-YVLZ6QUtZR_dFi9iQ43fMfuxCmKUVOA"/>
+</div>
+</div>
+<!-- Tall Bento Card -->
+<div class="md:row-span-2 bg-primary/5 border border-primary/20 rounded-xl p-8 flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<h3 class="text-2xl font-headline font-bold mb-4">Auto-Approval Logic</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Define custom parameters and let our AI handle the routine approvals while flagging complex cases for human review.</p>
+</div>
+<div class="mt-8 space-y-4">
+<div class="h-1 bg-primary/10 rounded-full w-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+<div class="flex justify-between text-[10px] font-label uppercase tracking-widest text-primary">
+<span>Efficiency Rank</span>
+<span>Top 1%</span>
+</div>
+</div>
+</div>
+<!-- Bottom Bento Card 1 -->
+<div class="bg-surface-container-highest rounded-xl p-8">
+<h4 class="text-xl font-headline font-bold mb-3">Instant KYC</h4>
+<p class="text-on-surface-variant text-sm">Automated compliance check across 180+ global jurisdictions.</p>
+</div>
+<!-- Bottom Bento Card 2 -->
+<div class="bg-surface-container-highest rounded-xl p-8">
+<h4 class="text-xl font-headline font-bold mb-3">Smart Collateral</h4>
+<p class="text-on-surface-variant text-sm">Real-world asset tokenization and valuation mapping.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works Timeline -->
+<section class="py-32 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<h2 class="text-4xl font-headline font-bold mb-20 text-center tracking-tighter uppercase">Protocol Execution</h2>
+<div class="relative">
+<!-- Vertical Connector Line (Mobile) / Horizontal (Desktop) -->
+<div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-zinc-800 -translate-y-1/2"></div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-12 relative z-10">
+<!-- Step 1 -->
+<div class="flex flex-col items-center text-center group">
+<div class="w-16 h-16 rounded-full bg-surface border-4 border-zinc-800 flex items-center justify-center mb-6 group-hover:border-primary transition-colors duration-500 relative">
+<span class="text-zinc-400 group-hover:text-primary font-headline font-bold">01</span>
+<div class="absolute -inset-2 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<h4 class="font-bold text-lg mb-2">Ingestion</h4>
+<p class="text-xs text-on-surface-variant">Securely upload borrower financial data and collateral docs.</p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center text-center group">
+<div class="w-16 h-16 rounded-full bg-surface border-4 border-zinc-800 flex items-center justify-center mb-6 group-hover:border-primary transition-colors duration-500 relative">
+<span class="text-zinc-400 group-hover:text-primary font-headline font-bold">02</span>
+</div>
+<h4 class="font-bold text-lg mb-2">Verification</h4>
+<p class="text-xs text-on-surface-variant">AI verifies document authenticity and entity cross-checks.</p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center text-center group">
+<div class="w-16 h-16 rounded-full bg-surface border-4 border-zinc-800 flex items-center justify-center mb-6 group-hover:border-primary transition-colors duration-500 relative">
+<span class="text-zinc-400 group-hover:text-primary font-headline font-bold">03</span>
+</div>
+<h4 class="font-bold text-lg mb-2">Simulation</h4>
+<p class="text-xs text-on-surface-variant">Stress-testing the portfolio against 14 global market scenarios.</p>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center text-center group">
+<div class="w-16 h-16 rounded-full bg-surface border-4 border-zinc-800 flex items-center justify-center mb-6 group-hover:border-primary transition-colors duration-500 relative">
+<span class="text-zinc-400 group-hover:text-primary font-headline font-bold">04</span>
+</div>
+<h4 class="font-bold text-lg mb-2">Scoring</h4>
+<p class="text-xs text-on-surface-variant">Proprietary Vault Score™ generated within 40 seconds.</p>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col items-center text-center group">
+<div class="w-16 h-16 rounded-full bg-surface border-4 border-zinc-800 flex items-center justify-center mb-6 group-hover:border-primary transition-colors duration-500 relative">
+<span class="text-zinc-400 group-hover:text-primary font-headline font-bold">05</span>
+</div>
+<h4 class="font-bold text-lg mb-2">Funding</h4>
+<p class="text-xs text-on-surface-variant">Smart contract execution for instant capital distribution.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-32 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+<div class="max-w-4xl mx-auto px-8 text-center relative z-10">
+<h2 class="text-5xl md:text-7xl font-headline font-bold tracking-tighter mb-10 leading-[0.95]">Ready to stress-test your portfolio?</h2>
+<p class="text-xl text-on-surface-variant mb-12 max-w-xl mx-auto">Join the world's most sophisticated lenders in the Kinetic Vault. Faster decisions, lower risk, absolute kinetic efficiency.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<button class="primary-gradient text-on-primary px-12 py-6 rounded-full text-xl font-extrabold font-headline hover:scale-105 transition-all neon-glow uppercase tracking-tighter">
+                    Apply for Access
+                </button>
+<button class="bg-surface-container-highest text-on-surface px-12 py-6 rounded-full text-xl font-bold font-headline hover:bg-zinc-800 transition-all border border-outline-variant/10">
+                    Speak with a Trader
+                </button>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#0e0e0e] w-full py-12">
+<div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
+<div class="flex flex-col items-center md:items-start">
+<span class="text-[#85f1ca] font-bold text-2xl font-headline tracking-tighter">KINETIC VAULT</span>
+<span class="font-['Manrope'] text-[10px] uppercase tracking-[0.1em] text-zinc-600 mt-2">© 2024 KINETIC VAULT. ALL RIGHTS RESERVED.</span>
+</div>
+<div class="flex space-x-8">
+<a class="font-['Manrope'] text-[10px] uppercase tracking-[0.1em] text-zinc-600 hover:text-[#85f1ca] transition-colors" href="#">Privacy Policy</a>
+<a class="font-['Manrope'] text-[10px] uppercase tracking-[0.1em] text-zinc-600 hover:text-[#85f1ca] transition-colors" href="#">Terms of Service</a>
+<a class="font-['Manrope'] text-[10px] uppercase tracking-[0.1em] text-zinc-600 hover:text-[#85f1ca] transition-colors" href="#">Security</a>
+</div>
+<div class="flex space-x-4">
+<div class="w-8 h-8 rounded-full border border-outline-variant/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-zinc-600 group-hover:text-primary text-lg" data-icon="public">public</span>
+</div>
+<div class="w-8 h-8 rounded-full border border-outline-variant/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-zinc-600 group-hover:text-primary text-lg" data-icon="terminal">terminal</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

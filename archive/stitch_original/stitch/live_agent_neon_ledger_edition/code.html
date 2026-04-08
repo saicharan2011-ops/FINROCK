@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CreditSense AI | Live Agent View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-dim": "#d7383b",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#00d2fc",
+                        "surface-bright": "#2c2c2c",
+                        "surface-variant": "#262626",
+                        "tertiary-fixed": "#00d2fc",
+                        "on-primary-fixed": "#004533",
+                        "secondary-dim": "#36edd0",
+                        "secondary": "#4dfcde",
+                        "surface-container-highest": "#262626",
+                        "on-secondary": "#005d50",
+                        "on-tertiary-fixed": "#002c37",
+                        "tertiary-fixed-dim": "#00c3eb",
+                        "inverse-surface": "#fcf8f8",
+                        "surface-container-low": "#131313",
+                        "on-tertiary-container": "#004352",
+                        "tertiary-dim": "#00c3eb",
+                        "surface-container-lowest": "#000000",
+                        "secondary-fixed": "#4dfcde",
+                        "error-container": "#9f0519",
+                        "surface-tint": "#85f1ca",
+                        "primary-fixed-dim": "#76e2bc",
+                        "surface-container-high": "#201f1f",
+                        "outline": "#777575",
+                        "surface-container": "#1a1919",
+                        "on-secondary-container": "#ddfff5",
+                        "on-secondary-fixed": "#00483e",
+                        "background": "#0e0e0e",
+                        "surface": "#0e0e0e",
+                        "primary-fixed": "#85f1ca",
+                        "outline-variant": "#494847",
+                        "surface-dim": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#004c5d",
+                        "secondary-container": "#006b5c",
+                        "on-error-container": "#ffa8a3",
+                        "on-secondary-fixed-variant": "#006859",
+                        "on-error": "#490006",
+                        "on-surface-variant": "#adaaaa",
+                        "primary-dim": "#76e2bc",
+                        "inverse-primary": "#006c52",
+                        "tertiary": "#6cddff",
+                        "on-primary-container": "#00291d",
+                        "on-tertiary": "#004c5d",
+                        "secondary-fixed-dim": "#36edd0",
+                        "on-primary": "#005a43",
+                        "error": "#ff716c",
+                        "primary-container": "#43b38f",
+                        "primary": "#85f1ca",
+                        "on-background": "#ffffff",
+                        "on-primary-fixed-variant": "#00644c",
+                        "inverse-on-surface": "#565554"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0e0e0e;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0e0e0e 100%),
+                              repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 2px);
+            background-size: cover, 100% 3px;
+        }
+        .glass-panel {
+            background: rgba(38, 38, 38, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(73, 72, 71, 0.15);
+        }
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(133, 241, 202, 0.5);
+        }
+        .circular-gauge {
+            transform: rotate(-90deg);
+        }
+    </style>
+</head>
+<body class="font-body text-on-surface overflow-hidden h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-20">
+<div class="flex justify-between items-center w-full px-8 h-full max-w-[1920px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">KINETIC VAULT</span>
+<div class="hidden md:flex gap-6">
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors font-headline tracking-tight" href="#">Markets</a>
+<a class="text-[#85f1ca] border-b-2 border-[#85f1ca] pb-1 font-headline tracking-tight" href="#">Analysis</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors font-headline tracking-tight" href="#">Portfolio</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors font-headline tracking-tight" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-[#262626]/50 px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">radio_button_checked</span>
+<span class="text-xs font-bold tracking-widest uppercase">Live Stream Active</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_20px_rgba(133,241,202,0.3)] transition-all duration-300">
+                    Run Analysis
+                </button>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 pt-24 bg-[#0e0e0e] flex flex-col z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="Alpha Trader" data-alt="professional financial analyst portrait in sharp suit with confident expression and dark lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVrcoyQhJsOcZXV3j2Mprce7fD-kX-1tiM8k8Hj9aLuictZrbi24OZNDaADaiGy6wHX8MaHlwPp1XDvpaDdZvbBTzaNNzt2eIFp8n-sxsZtuRhg1vxkguGoQz-vtJcY8Y_hjfQ_goLK_hmrEytYtkkwiIpHTWiSAZJNsyYKQRvrqQIHorj-zHz4epeDBDRJCIyJSzgF-QE5ZYpMWYQARuwveS0FfcVKVop2e_7s1jCCNqGaD1FkdnD2Z7Il7GvqU-4fdy-6KJetL0"/>
+</div>
+<div>
+<p class="text-sm font-bold font-headline">Alpha Trader</p>
+<p class="text-[10px] uppercase tracking-widest text-primary">Premium Tier</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-[#85f1ca] bg-[#85f1ca]/10 rounded-r-full font-bold translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-medium text-sm">Live View</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-medium text-sm">Results</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+<span class="font-medium text-sm">Support</span>
+</a>
+</nav>
+<div class="mt-auto pb-8">
+<a class="flex items-center gap-4 px-6 py-3 text-zinc-600 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="pl-64 pt-20 h-screen overflow-hidden">
+<div class="h-full flex gap-px bg-outline-variant/10">
+<!-- LEFT COLUMN: Agent Actions (Live Log) -->
+<section class="w-[30%] bg-surface-container-low p-6 flex flex-col">
+<div class="mb-6">
+<h2 class="text-xs font-bold tracking-[0.2em] text-zinc-500 uppercase mb-1">System Orchestration</h2>
+<h1 class="font-headline text-2xl font-bold">Agent Actions</h1>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+<!-- Log Item 1 -->
+<div class="p-4 rounded-xl glass-panel relative overflow-hidden group">
+<div class="absolute left-0 top-0 w-1 h-full bg-primary shadow-[0_0_10px_#85f1ca]"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">DOCUMENT_PARSING</span>
+<span class="text-[10px] font-mono text-zinc-500">14:22:01.04</span>
+</div>
+<p class="text-sm font-medium mb-2">AI extracting fiscal nodes from Q3 balance sheet...</p>
+<div class="flex gap-2">
+<div class="h-1 bg-primary/20 flex-1 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/3 shadow-[0_0_8px_#85f1ca]"></div>
+</div>
+</div>
+</div>
+<!-- Log Item 2 -->
+<div class="p-4 rounded-xl glass-panel relative overflow-hidden bg-surface-container-highest/40">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">ENTITY_RECON</span>
+<span class="text-[10px] font-mono text-zinc-500">14:21:48.12</span>
+</div>
+<p class="text-sm font-medium text-zinc-300">Cross-referencing legal entity ID with global sanctions lists.</p>
+<span class="text-[10px] text-zinc-500 italic flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-[12px]">check_circle</span> No matches found. Proceeding.
+                        </span>
+</div>
+<!-- Log Item 3 -->
+<div class="p-4 rounded-xl border border-error/20 bg-error/5 relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-error shadow-[0_0_10px_#ff716c]"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-error bg-error/10 px-2 py-0.5 rounded">VALIDATION_ERROR</span>
+<span class="text-[10px] font-mono text-zinc-500">14:21:30.95</span>
+</div>
+<p class="text-sm font-medium">Page 12: Handwritten annotation obscures tax identification field.</p>
+<button class="mt-3 text-[10px] font-bold uppercase tracking-widest text-error hover:underline">Manual Review Required</button>
+</div>
+<!-- Log Item 4 -->
+<div class="p-4 rounded-xl glass-panel opacity-60">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded">AUTH_SUCCESS</span>
+<span class="text-[10px] font-mono text-zinc-500">14:20:55.22</span>
+</div>
+<p class="text-sm font-medium">Secure handshake established with Tier 1 Data Provider.</p>
+</div>
+</div>
+</section>
+<!-- CENTER COLUMN: Live Metrics -->
+<section class="flex-1 bg-surface p-8 overflow-y-auto">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="text-xs font-bold tracking-[0.2em] text-zinc-500 uppercase mb-1">Active File: #TRD-992-ALPHA</h2>
+<h1 class="font-headline text-4xl font-bold tracking-tight">CreditSense Intelligence</h1>
+</div>
+<div class="text-right">
+<span class="text-4xl font-headline font-bold text-primary neon-glow">92.4</span>
+<span class="text-sm text-zinc-500 block font-bold">COMPLETION SCORE</span>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-2 gap-6">
+<!-- Progress Card -->
+<div class="col-span-2 glass-panel p-6 rounded-xl">
+<div class="flex justify-between mb-4">
+<h3 class="font-headline font-bold text-lg">Document Integrity Pipeline</h3>
+<span class="text-primary font-mono font-bold">88% Total</span>
+</div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest mb-1">
+<span class="text-zinc-400">Identity Verification</span>
+<span class="text-secondary">100% Verified</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest mb-1">
+<span class="text-zinc-400">Financial History Analysis</span>
+<span class="text-primary">74% Processing</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4 animate-pulse"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest mb-1">
+<span class="text-zinc-400">Collateral Valuation</span>
+<span class="text-tertiary">91% Ready</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[91%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Ratio Card 1 -->
+<div class="bg-surface-container-low p-6 rounded-xl relative overflow-hidden group hover:bg-surface-container-high transition-all">
+<h4 class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Debt-to-Equity</h4>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-headline font-bold">0.42</span>
+<span class="text-primary text-xs font-bold">+12.4% Δ</span>
+</div>
+<div class="mt-4 flex gap-1 h-8 items-end">
+<div class="w-1 bg-primary/20 h-4"></div>
+<div class="w-1 bg-primary/20 h-6"></div>
+<div class="w-1 bg-primary/40 h-5"></div>
+<div class="w-1 bg-primary/60 h-8"></div>
+<div class="w-1 bg-primary h-7"></div>
+<div class="w-1 bg-primary h-8"></div>
+</div>
+</div>
+<!-- Ratio Card 2 -->
+<div class="bg-surface-container-low p-6 rounded-xl relative overflow-hidden group hover:bg-surface-container-high transition-all">
+<h4 class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Liquidity Ratio</h4>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-headline font-bold">2.15</span>
+<span class="text-tertiary text-xs font-bold">Optimum</span>
+</div>
+<div class="mt-4 flex gap-1 h-8 items-end">
+<div class="w-1 bg-tertiary h-8"></div>
+<div class="w-1 bg-tertiary/80 h-7"></div>
+<div class="w-1 bg-tertiary/60 h-6"></div>
+<div class="w-1 bg-tertiary/40 h-4"></div>
+<div class="w-1 bg-tertiary/20 h-3"></div>
+<div class="w-1 bg-tertiary/10 h-2"></div>
+</div>
+</div>
+<!-- Market Context Card -->
+<div class="col-span-2 relative h-48 rounded-xl overflow-hidden group">
+<img alt="Market Volatility" class="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" data-alt="abstract financial data charts with neon green and blue glowing lines on a dark background showing market volatility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkEVpJsBcrDVg8-tix8SUjOxEgD-vF--oGScaeyvqjKKfnf9FnH-pTtAWu7ASCGKwD1HIH6sES0bvkOR8l_mZMOH7RF-KtH5TZs6lQnhCBWzZPKf1uVe85uNfZ4PQ6G2jEF575kFRIs_b2c2u26zkEljqWshfYY9K1Na0btKeIqvD_hNhUvt27TyUHz-hbkYpFIn5CdiUpzzbwt0p15e1LAq9aCCMC_WIYSGBmu8dIskLhLMFF_32tgAWTEIja7kTUxVOWfNBjbuY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
+<div class="absolute bottom-4 left-6">
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 py-1 rounded">Market Volatility Pulse</span>
+<h3 class="font-headline text-xl font-bold mt-2">Correlated Risk Sensitivity</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: Risk Gauges -->
+<section class="w-[28%] bg-surface-container-low p-6 flex flex-col">
+<div class="mb-8">
+<h2 class="text-xs font-bold tracking-[0.2em] text-zinc-500 uppercase mb-1">Neural Risk Engine</h2>
+<h1 class="font-headline text-2xl font-bold">Risk Gauges</h1>
+</div>
+<div class="grid grid-cols-2 gap-y-10 gap-x-6 flex-1 items-center">
+<!-- Gauge 1: Default Risk -->
+<div class="flex flex-col items-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full circular-gauge" viewbox="0 0 100 100">
+<circle class="text-zinc-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary shadow-glow" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="200" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xl font-headline font-bold">18%</span>
+</div>
+</div>
+<span class="mt-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Default Risk</span>
+</div>
+<!-- Gauge 2: Market Exposure -->
+<div class="flex flex-col items-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full circular-gauge" viewbox="0 0 100 100">
+<circle class="text-zinc-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-tertiary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="100" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xl font-headline font-bold">62%</span>
+</div>
+</div>
+<span class="mt-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Exposure</span>
+</div>
+<!-- Gauge 3: Fraud Alert -->
+<div class="flex flex-col items-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full circular-gauge" viewbox="0 0 100 100">
+<circle class="text-zinc-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="230" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xl font-headline font-bold">04%</span>
+</div>
+</div>
+<span class="mt-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Fraud Score</span>
+</div>
+<!-- Gauge 4: Sector Heat -->
+<div class="flex flex-col items-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full circular-gauge" viewbox="0 0 100 100">
+<circle class="text-zinc-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-error shadow-[0_0_15px_rgba(255,113,108,0.5)]" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="50" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xl font-headline font-bold text-error">82%</span>
+</div>
+</div>
+<span class="mt-3 text-[10px] font-bold uppercase tracking-widest text-error">Sector Heat</span>
+</div>
+<!-- Gauge 5: Liquidity -->
+<div class="flex flex-col items-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full circular-gauge" viewbox="0 0 100 100">
+<circle class="text-zinc-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="70" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xl font-headline font-bold">75%</span>
+</div>
+</div>
+<span class="mt-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Liquidity Depth</span>
+</div>
+<!-- Gauge 6: Sentiment -->
+<div class="flex flex-col items-center">
+<div class="relative w-28 h-28">
+<svg class="w-full h-full circular-gauge" viewbox="0 0 100 100">
+<circle class="text-zinc-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="140" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-xl font-headline font-bold">44%</span>
+</div>
+</div>
+<span class="mt-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Sentiment</span>
+</div>
+</div>
+<!-- AI Verdict Glass Card -->
+<div class="mt-12 p-5 rounded-2xl bg-gradient-to-br from-primary/20 to-tertiary/20 backdrop-blur-md border border-white/5">
+<h5 class="text-[10px] font-extrabold uppercase tracking-widest text-primary mb-2">AI Agent Verdict</h5>
+<p class="text-xs leading-relaxed text-zinc-200">
+                        "High creditworthiness confirmed. Diversified asset base offsets localized sector heat. Recommend immediate clearance."
+                    </p>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="fixed bottom-0 left-0 w-full bg-[#0e0e0e] z-50">
+<div class="max-w-7xl mx-auto px-8 h-12 flex justify-between items-center">
+<span class="text-[#85f1ca] font-bold font-headline text-xs">© 2024 KINETIC VAULT. ALL RIGHTS RESERVED.</span>
+<div class="flex gap-8">
+<a class="text-zinc-600 hover:text-[#85f1ca] transition-colors font-['Manrope'] text-[10px] uppercase tracking-[0.1em]" href="#">Privacy Policy</a>
+<a class="text-zinc-600 hover:text-[#85f1ca] transition-colors font-['Manrope'] text-[10px] uppercase tracking-[0.1em]" href="#">Terms of Service</a>
+<a class="text-zinc-600 hover:text-[#85f1ca] transition-colors font-['Manrope'] text-[10px] uppercase tracking-[0.1em]" href="#">Security</a>
+</div>
+</div>
+</footer>
+</body></html>

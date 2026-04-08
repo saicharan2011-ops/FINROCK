@@ -1,0 +1,12 @@
+goal: Test Circular Trading detection using NetworkX.
+company_name: Alpha Trading Hub
+loan_amount: 12000000
+available_documents:
+  - gst_returns_2025
+  - mca_filings
+ground_truth_label: REJECT
+max_steps: 8
+planted_anomalies:
+  - circular_trading_cycle_detected
+  - revenue_gst_mismatch
+description: High-volume transactions between 3 sister concerns with no physical value add.

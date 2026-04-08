@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Kinetic Vault (Dark) Tokens */
+  --color-primary: #85f1ca;
+  --color-primary-container: #43b38f;
+  --color-on-primary: #005a43;
+  --color-secondary: #4dfcde;
+  --color-tertiary: #6cddff;
+  --color-background: #0e0e0e;
+  --color-surface: #0e0e0e;
+  --color-on-surface: #ffffff;
+  --color-surface-container-low: #131313;
+  --color-surface-container-highest: #262626;
+  --color-surface-variant: rgba(38, 38, 38, 0.6);
+  --color-on-surface-variant: rgba(255, 255, 255, 0.6);
+  --color-outline-variant: rgba(73, 72, 71, 0.15);
+
+  --font-headline: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+}
+
+:root {
+  --primary: #85f1ca;
+  --on-primary: #005a43;
+  --surface: #0e0e0e;
+  --background: #0e0e0e;
+}
+
+.light {
+  /* Technical Curator (Light) Tokens */
+  --color-primary: #012d1d;
+  --color-primary-container: #1b4332;
+  --color-on-primary: #ffffff;
+  --color-secondary-container: #cee9d3;
+  --color-secondary-fixed: #cee9d3;
+  --color-background: #f8f9fa;
+  --color-surface: #f8f9fa;
+  --color-on-surface: #191c1d;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface-container: #edeeef;
+  --color-on-surface-variant: #414844;
+  --color-outline-variant: rgba(25, 28, 29, 0.15);
+  
+  --primary: #012d1d;
+  --on-primary: #ffffff;
+  --surface: #f8f9fa;
+  --background: #f8f9fa;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-headline {
+  font-family: var(--font-headline);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom scrollbar for agent logs */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(133, 241, 202, 0.2);
+  border-radius: 10px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(133, 241, 202, 0.4);
+}

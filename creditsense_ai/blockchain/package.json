@@ -1,0 +1,28 @@
+{
+  "name": "creditsense-blockchain",
+  "version": "1.0.0",
+  "description": "CreditSense AI — On-chain audit trail via Hardhat",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:amoy": "npx hardhat run scripts/deploy.js --network amoy",
+    "verify:local": "npx hardhat run scripts/verify_deployment.js --network localhost",
+    "verify:amoy": "npx hardhat run scripts/verify_deployment.js --network amoy",
+    "node": "npx hardhat node",
+    "test": "npx hardhat test"
+  },
+  "keywords": [
+    "creditsense",
+    "blockchain",
+    "hardhat",
+    "polygon"
+  ],
+  "author": "CreditSense AI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.3",
+    "dotenv": "^17.4.0",
+    "hardhat": "^3.3.0"
+  },
+  "type": "module"
+}

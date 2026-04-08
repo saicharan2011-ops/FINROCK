@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Blockchain Audit Trail | CreditSense AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#5a302f",
+                        "surface-dim": "#d9dadb",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#331111",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#ffdad8",
+                        "primary-fixed-dim": "#a5d0b9",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-on-surface": "#f0f1f2",
+                        "outline": "#717973",
+                        "on-surface-variant": "#414844",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-fixed": "#092012",
+                        "primary-container": "#1b4332",
+                        "on-secondary-fixed-variant": "#354c3b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "secondary": "#4c6452",
+                        "tertiary-fixed-dim": "#f5b7b4",
+                        "secondary-container": "#cce6d0",
+                        "outline-variant": "#c1c8c2",
+                        "on-primary-fixed": "#002114",
+                        "background": "#f8f9fa",
+                        "secondary-fixed-dim": "#b3cdb7",
+                        "inverse-primary": "#a5d0b9",
+                        "surface-tint": "#3f6653",
+                        "surface-container-low": "#f3f4f5",
+                        "inverse-surface": "#2e3132",
+                        "surface-container": "#edeeef",
+                        "on-surface": "#191c1d",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#86af99",
+                        "primary": "#012d1d",
+                        "surface": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#d29895",
+                        "on-secondary-container": "#506856",
+                        "tertiary": "#401b1b",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#673a39",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-fixed": "#c1ecd4",
+                        "on-background": "#191c1d",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#274e3d",
+                        "secondary-fixed": "#cee9d3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="text-xl font-headline font-bold tracking-tighter text-primary">
+                CreditSense AI
+            </div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-emerald-800/60 font-medium font-headline hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-emerald-800/60 font-medium font-headline hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary font-bold font-headline border-b-2 border-primary pb-1" href="#">Audit</a>
+<a class="text-emerald-800/60 font-medium font-headline hover:text-primary transition-colors" href="#">Insights</a>
+</nav>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-headline font-bold scale-95 hover:scale-100 duration-200 ease-in-out">
+                Run Analysis
+            </button>
+</div>
+</header>
+<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
+<!-- Hero Section: Blockchain Visualization -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
+<div>
+<span class="inline-block font-label text-primary font-bold tracking-widest uppercase text-xs mb-4">Immutable Ledger</span>
+<h1 class="font-headline text-5xl font-bold tracking-tight text-primary mb-6 leading-tight">
+                    Blockchain-Verified <br/>Audit Intelligence.
+                </h1>
+<p class="text-on-surface-variant text-lg max-w-lg mb-8 leading-relaxed">
+                    CreditSense AI leverages decentralized ledgers to ensure every model decision, agent action, and document hash is permanently anchored for regulatory compliance.
+                </p>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 px-4 py-2 bg-secondary-fixed rounded-full">
+<span class="material-symbols-outlined text-primary scale-75" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label font-bold text-xs">NETWORK ACTIVE</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-full">
+<span class="font-label font-bold text-xs text-on-surface-variant tracking-tighter uppercase">Block Height: 18,429,102</span>
+</div>
+</div>
+</div>
+<div class="relative h-[400px] flex items-center justify-center">
+<!-- 3D Chain Visualization Representation -->
+<div class="flex items-center gap-4 relative">
+<!-- Link 1 -->
+<div class="w-24 h-24 bg-surface-container-lowest shadow-xl rounded-xl border border-primary/5 flex flex-col items-center justify-center gap-2 group hover:-translate-y-2 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary/40 text-3xl">database</span>
+<div class="w-12 h-1 bg-primary/20 rounded-full"></div>
+</div>
+<div class="w-8 h-0.5 bg-gradient-to-r from-primary/20 to-primary/40"></div>
+<!-- Link 2 -->
+<div class="w-28 h-28 bg-primary-container shadow-2xl rounded-xl flex flex-col items-center justify-center gap-2 group hover:-translate-y-2 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-on-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">link</span>
+<div class="w-14 h-1.5 bg-on-primary-container/40 rounded-full"></div>
+</div>
+<div class="w-8 h-0.5 bg-gradient-to-r from-primary/40 to-primary/60"></div>
+<!-- Link 3 -->
+<div class="w-24 h-24 bg-surface-container-lowest shadow-xl rounded-xl border border-primary/5 flex flex-col items-center justify-center gap-2 group hover:-translate-y-2 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary/40 text-3xl">history_edu</span>
+<div class="w-12 h-1 bg-primary/20 rounded-full"></div>
+</div>
+<div class="w-8 h-0.5 bg-gradient-to-r from-primary/60 to-primary/40"></div>
+<!-- Link 4-6 Hint -->
+<div class="flex -space-x-4 opacity-50">
+<div class="w-16 h-16 bg-surface-container rounded-xl border border-primary/5"></div>
+<div class="w-16 h-16 bg-surface-container rounded-xl border border-primary/5"></div>
+<div class="w-16 h-16 bg-surface-container rounded-xl border border-primary/5"></div>
+</div>
+</div>
+<!-- Background Decorative Blob -->
+<div class="absolute -z-10 w-full h-full bg-primary/5 rounded-full blur-3xl"></div>
+</div>
+</section>
+<!-- Audit Explorer -->
+<section class="mb-24">
+<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+<div>
+<h2 class="font-headline text-3xl font-bold tracking-tight text-primary">Audit Log</h2>
+<p class="text-on-surface-variant font-body mt-2">Real-time immutable tracking of agentic financial operations.</p>
+</div>
+<div class="flex bg-surface-container-low p-1.5 rounded-xl">
+<button class="px-5 py-2 bg-surface-container-lowest shadow-sm rounded-lg font-label font-bold text-xs text-primary transition-all">ALL EVENTS</button>
+<button class="px-5 py-2 hover:bg-surface-container-lowest rounded-lg font-label font-bold text-xs text-on-surface-variant transition-all">AGENT ACTIONS</button>
+<button class="px-5 py-2 hover:bg-surface-container-lowest rounded-lg font-label font-bold text-xs text-on-surface-variant transition-all">CAM EVENTS</button>
+<button class="px-5 py-2 hover:bg-surface-container-lowest rounded-lg font-label font-bold text-xs text-on-surface-variant transition-all">DOC HASHES</button>
+</div>
+</div>
+<!-- Audit Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-primary/5">
+<th class="pb-6 font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant">Timestamp (UTC)</th>
+<th class="pb-6 font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant">Event Type</th>
+<th class="pb-6 font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant">Actor / Agent ID</th>
+<th class="pb-6 font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant">Blockchain Hash</th>
+<th class="pb-6 font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<!-- Row 1 -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 font-body text-sm font-medium">2024-05-24 14:22:01</td>
+<td class="py-5">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label font-bold text-[10px]">DOC_HASH</span>
+</td>
+<td class="py-5 font-label font-bold text-xs text-primary">System_Uploader_Alpha</td>
+<td class="py-5 font-label text-xs text-on-surface-variant tracking-tighter truncate max-w-[120px]">0x72a1...f3e8</td>
+<td class="py-5 text-right">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 font-body text-sm font-medium">2024-05-24 14:18:44</td>
+<td class="py-5">
+<span class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full font-label font-bold text-[10px]">AGENT_ACTION</span>
+</td>
+<td class="py-5 font-label font-bold text-xs text-primary">Decision_Engine_v4</td>
+<td class="py-5 font-label text-xs text-on-surface-variant tracking-tighter truncate max-w-[120px]">0x11b5...9c12</td>
+<td class="py-5 text-right">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-5 font-body text-sm font-medium">2024-05-24 14:05:12</td>
+<td class="py-5">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-label font-bold text-[10px]">CAM_EVENT</span>
+</td>
+<td class="py-5 font-label font-bold text-xs text-primary">Compliance_Monitor</td>
+<td class="py-5 font-label text-xs text-on-surface-variant tracking-tighter truncate max-w-[120px]">0x99e0...22aa</td>
+<td class="py-5 text-right">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+</tr>
+<!-- Repeat Rows 4-11 for effect (abbreviated content) -->
+<tr class="group hover:bg-surface-container-low transition-colors opacity-90"><td class="py-5 text-sm">2024-05-24 13:55:00</td><td class="py-5"><span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label font-bold text-[10px]">DOC_HASH</span></td><td class="py-5 font-label font-bold text-xs text-primary">Ingest_Daemon</td><td class="py-5 font-label text-xs">0x44d2...11b0</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-80"><td class="py-5 text-sm">2024-05-24 13:42:19</td><td class="py-5"><span class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full font-label font-bold text-[10px]">AGENT_ACTION</span></td><td class="py-5 font-label font-bold text-xs text-primary">Risk_Scoring_Agent</td><td class="py-5 font-label text-xs">0xfe33...001c</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-70"><td class="py-5 text-sm">2024-05-24 13:30:05</td><td class="py-5"><span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-label font-bold text-[10px]">CAM_EVENT</span></td><td class="py-5 font-label font-bold text-xs text-primary">Audit_Proxy_Link</td><td class="py-5 font-label text-xs">0xcc56...7a92</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-60"><td class="py-5 text-sm">2024-05-24 13:12:44</td><td class="py-5"><span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label font-bold text-[10px]">DOC_HASH</span></td><td class="py-5 font-label font-bold text-xs text-primary">OCR_Validator_02</td><td class="py-5 font-label text-xs">0xaa91...66ee</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-50"><td class="py-5 text-sm">2024-05-24 12:58:30</td><td class="py-5"><span class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full font-label font-bold text-[10px]">AGENT_ACTION</span></td><td class="py-5 font-label font-bold text-xs text-primary">Limit_Adjustment_Bot</td><td class="py-5 font-label text-xs">0xbb23...ff12</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-40"><td class="py-5 text-sm">2024-05-24 12:44:12</td><td class="py-5"><span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-label font-bold text-[10px]">CAM_EVENT</span></td><td class="py-5 font-label font-bold text-xs text-primary">Global_Sync_Bridge</td><td class="py-5 font-label text-xs">0xdd90...88ab</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-30"><td class="py-5 text-sm">2024-05-24 12:30:00</td><td class="py-5"><span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label font-bold text-[10px]">DOC_HASH</span></td><td class="py-5 font-label font-bold text-xs text-primary">Node_Operator_7</td><td class="py-5 font-label text-xs">0xee45...cc01</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+<tr class="group hover:bg-surface-container-low transition-colors opacity-20"><td class="py-5 text-sm">2024-05-24 12:15:15</td><td class="py-5"><span class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full font-label font-bold text-[10px]">AGENT_ACTION</span></td><td class="py-5 font-label font-bold text-xs text-primary">Lending_Flow_Service</td><td class="py-5 font-label text-xs">0xff12...dd44</td><td class="py-5 text-right"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Document Verification & Technical Details Bento -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Verification Zone (2/3 width) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-10 border border-primary/5 shadow-sm">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 bg-secondary-fixed flex items-center justify-center rounded-xl">
+<span class="material-symbols-outlined text-primary">shield</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold text-primary">Document Verification</h3>
+<p class="text-on-surface-variant text-sm">Instant SHA-256 hash validation against the mainnet.</p>
+</div>
+</div>
+<div class="border-2 border-dashed border-outline-variant/30 rounded-2xl p-12 flex flex-col items-center justify-center text-center hover:border-primary/20 transition-all group">
+<div class="w-16 h-16 bg-surface-container flex items-center justify-center rounded-full mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">upload_file</span>
+</div>
+<p class="font-body text-on-surface-variant mb-2">Drag and drop file to verify its integrity</p>
+<p class="font-label font-bold text-[10px] text-outline-variant uppercase tracking-widest">PDF, JSON, or CSV (MAX 25MB)</p>
+<button class="mt-8 px-8 py-3 bg-primary text-on-primary rounded-xl font-headline font-bold text-sm">Select Document</button>
+</div>
+</div>
+<!-- Technical Accordion -->
+<div class="bg-surface-container p-8 rounded-xl">
+<h3 class="font-headline text-lg font-bold text-primary mb-6">Network Specifications</h3>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest rounded-lg p-4 cursor-pointer group">
+<div class="flex justify-between items-center">
+<span class="font-label font-bold text-xs uppercase tracking-tight text-primary">Smart Contract ABI</span>
+<span class="material-symbols-outlined text-sm text-on-surface-variant transition-transform group-hover:rotate-90">chevron_right</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-4">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label font-bold text-xs uppercase tracking-tight text-primary">Manual Verification</span>
+<span class="material-symbols-outlined text-sm text-primary">expand_more</span>
+</div>
+<div class="text-xs text-on-surface-variant leading-relaxed space-y-3">
+<p>1. Copy the 32-byte transaction hash from the Audit Log.</p>
+<p>2. Query the <span class="font-bold">verifyEvent(hash)</span> function on the Creditsense Verified Ledger.</p>
+<p>3. Match the returned boolean and timestamp with the system record.</p>
+<a class="inline-block pt-2 text-primary font-bold hover:underline" href="#">View on Explorer ↗</a>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-4 cursor-pointer group">
+<div class="flex justify-between items-center">
+<span class="font-label font-bold text-xs uppercase tracking-tight text-primary">Oracle Node Specs</span>
+<span class="material-symbols-outlined text-sm text-on-surface-variant group-hover:rotate-90 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- Signature Component: Pulse Tile -->
+<div class="bg-secondary-fixed rounded-xl p-4 mt-8">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label text-[10px] font-bold text-primary tracking-widest uppercase">Network Health</span>
+<span class="text-primary font-headline font-bold text-lg">99.9%</span>
+</div>
+<div class="h-10 flex items-end gap-1">
+<div class="flex-1 bg-primary/20 h-6 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-8 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-5 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-9 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 h-7 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/40 h-10 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-6 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-4 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/60 h-9 rounded-t-sm"></div>
+<div class="flex-1 bg-primary h-10 rounded-t-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 mt-auto bg-secondary-fixed/30 tonal-break-surface">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-6">
+<div class="font-headline font-bold text-primary text-lg">
+                CreditSense AI
+            </div>
+<p class="font-body text-sm antialiased text-on-surface-variant">
+                © 2024 CreditSense AI. Precision in Financial Engineering.
+            </p>
+<div class="flex gap-8">
+<a class="text-emerald-800/70 hover:text-primary transition-all text-sm font-medium" href="#">Privacy</a>
+<a class="text-emerald-800/70 hover:text-primary transition-all text-sm font-medium" href="#">Terms</a>
+<a class="text-emerald-800/70 hover:text-primary transition-all text-sm font-medium" href="#">Security</a>
+<a class="text-emerald-800/70 hover:text-primary transition-all text-sm font-medium" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>

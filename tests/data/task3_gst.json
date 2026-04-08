@@ -1,0 +1,12 @@
+{
+  "entity": "Global Textiles Corp",
+  "gstin": "27AAACG1234H1Z5",
+  "total_revenue": 500000000,
+  "tax_paid": 90000000,
+  "status": "Healthy",
+  "b2b_invoices": [
+    {"invoice_no":"GT001","buyer_gstin":"27BUYERCO1234H1Z5", "taxable_value":8000000,"invoice_date":"2025-01-05"},
+    {"invoice_no":"GT002","buyer_gstin":"27BUYERCO5678H1Z5", "taxable_value":12000000,"invoice_date":"2025-01-12"},
+    {"invoice_no":"GT003","buyer_gstin":"27BUYERCO9999H1Z5", "taxable_value":15000000,"invoice_date":"2025-01-20"}
+  ]
+}

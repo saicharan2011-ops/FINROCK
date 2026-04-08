@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CreditSense AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-dim": "#d7383b",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#00d2fc",
+                        "surface-bright": "#2c2c2c",
+                        "surface-variant": "#262626",
+                        "tertiary-fixed": "#00d2fc",
+                        "on-primary-fixed": "#004533",
+                        "secondary-dim": "#36edd0",
+                        "secondary": "#4dfcde",
+                        "surface-container-highest": "#262626",
+                        "on-secondary": "#005d50",
+                        "on-tertiary-fixed": "#002c37",
+                        "tertiary-fixed-dim": "#00c3eb",
+                        "inverse-surface": "#fcf8f8",
+                        "surface-container-low": "#131313",
+                        "on-tertiary-container": "#004352",
+                        "tertiary-dim": "#00c3eb",
+                        "surface-container-lowest": "#000000",
+                        "secondary-fixed": "#4dfcde",
+                        "error-container": "#9f0519",
+                        "surface-tint": "#85f1ca",
+                        "primary-fixed-dim": "#76e2bc",
+                        "surface-container-high": "#201f1f",
+                        "outline": "#777575",
+                        "surface-container": "#1a1919",
+                        "on-secondary-container": "#ddfff5",
+                        "on-secondary-fixed": "#00483e",
+                        "background": "#0e0e0e",
+                        "surface": "#0e0e0e",
+                        "primary-fixed": "#85f1ca",
+                        "outline-variant": "#494847",
+                        "surface-dim": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#004c5d",
+                        "secondary-container": "#006b5c",
+                        "on-error-container": "#ffa8a3",
+                        "on-secondary-fixed-variant": "#006859",
+                        "on-error": "#490006",
+                        "on-surface-variant": "#adaaaa",
+                        "primary-dim": "#76e2bc",
+                        "inverse-primary": "#006c52",
+                        "tertiary": "#6cddff",
+                        "on-primary-container": "#00291d",
+                        "on-tertiary": "#004c5d",
+                        "secondary-fixed-dim": "#36edd0",
+                        "on-primary": "#005a43",
+                        "error": "#ff716c",
+                        "primary-container": "#43b38f",
+                        "primary": "#85f1ca",
+                        "on-background": "#ffffff",
+                        "on-primary-fixed-variant": "#00644c",
+                        "inverse-on-surface": "#565554"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(38, 38, 38, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(73, 72, 71, 0.15);
+        }
+        .neon-glow:hover {
+            box-shadow: 0 0 15px rgba(133, 241, 202, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-20">
+<div class="flex justify-between items-center w-full px-8 h-full max-w-[1920px] mx-auto">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-bold tracking-tighter text-[#85f1ca] font-headline">KINETIC VAULT</span>
+<div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Markets</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Analysis</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Portfolio</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors" href="#">Reports</a>
+</div>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-full font-bold text-sm tracking-tight hover:scale-105 active:scale-95 transition-all neon-glow">
+                Run Analysis
+            </button>
+</div>
+</nav>
+<!-- Side Navigation Bar -->
+<aside class="h-screen w-64 fixed left-0 top-0 pt-24 bg-[#0e0e0e] flex flex-col py-6 z-40">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+<div>
+<p class="font-bold text-sm text-on-surface">Alpha Trader</p>
+<p class="text-[10px] uppercase tracking-widest text-zinc-500">Premium Tier</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all font-medium text-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-[#85f1ca] bg-[#85f1ca]/10 rounded-r-full font-bold translate-x-1 duration-200 text-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">query_stats</span> Live View
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all font-medium text-sm" href="#">
+<span class="material-symbols-outlined">analytics</span> Results
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all font-medium text-sm" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all font-medium text-sm" href="#">
+<span class="material-symbols-outlined">help_center</span> Support
+            </a>
+</nav>
+<div class="px-6 pt-6 mt-auto">
+<div class="relative group cursor-pointer overflow-hidden rounded-xl aspect-square bg-surface-container-highest mb-6 flex items-center justify-center">
+<img class="w-32 h-32 object-contain group-hover:scale-110 transition-transform duration-500" data-alt="3d digital wallet floating in dark space with glowing neon green circuits and holographic interfaces" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXe3B0IluuQ9egpIaoO1hLIf4qDa-BWmzzvw7OD_uuURPnCXt3CRgKZO15rpbrpbmaf6JVVJc-0aU3oIGgX1GJx3O_99DIVu-G6HoRl6x4AG2WvHBUGVLa40uk9xWGQAm830CF1iUeCE722FSisCGuxywHbd07_ZVNoLjXXNFRP6w40IyGCUMEmMowU4HlGuashX3CC4eIVYCB285qo7RTjwQZVHG9ow1R8KIaGMmKg5lPXjPKLwDjwq9FJmtyePREmGyFiAcvHKM"/>
+<div class="absolute bottom-2 text-[10px] text-primary font-bold tracking-tighter">SECURE VAULT ACTIVE</div>
+</div>
+<a class="flex items-center gap-3 text-zinc-600 hover:text-[#85f1ca] transition-colors text-xs font-bold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">logout</span> Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-28 pb-12 px-12 min-h-screen bg-surface">
+<!-- Header & Stepper Section -->
+<header class="max-w-6xl mx-auto mb-16">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-5xl font-headline font-bold tracking-tighter text-on-surface mb-2">CreditSense AI</h1>
+<p class="text-zinc-500 max-w-md">Proprietary risk assessment engine. Upload institutional data to generate an immediate credit score volatility report.</p>
+</div>
+<div class="text-right">
+<span class="label-sm block text-primary font-bold text-xs uppercase tracking-[0.2em] mb-1">Current Session</span>
+<span class="text-2xl font-headline font-light tracking-tight text-on-surface">INV-2024-0892</span>
+</div>
+</div>
+<!-- 4-Step Stepper -->
+<div class="grid grid-cols-4 gap-4 relative">
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-zinc-800 -translate-y-1/2 z-0"></div>
+<div class="relative z-10 flex flex-col items-center group">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold shadow-[0_0_15px_rgba(133,241,202,0.4)] mb-3">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Company Info</span>
+</div>
+<div class="relative z-10 flex flex-col items-center group">
+<div class="w-10 h-10 rounded-full bg-primary border-4 border-surface flex items-center justify-center text-on-primary font-bold shadow-[0_0_15px_rgba(133,241,202,0.2)] mb-3">
+                        2
+                    </div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface">Upload</span>
+</div>
+<div class="relative z-10 flex flex-col items-center group">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-zinc-700 flex items-center justify-center text-zinc-500 font-bold mb-3">
+                        3
+                    </div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Run Analysis</span>
+</div>
+<div class="relative z-10 flex flex-col items-center group">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-zinc-700 flex items-center justify-center text-zinc-500 font-bold mb-3">
+                        4
+                    </div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Results</span>
+</div>
+</div>
+</header>
+<!-- Document Upload 2x2 Bento Grid -->
+<section class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+<!-- Upload Card 1 (Uploaded) -->
+<div class="group relative bg-surface-container-low p-8 rounded-xl border-l-4 border-primary transition-all duration-300 hover:bg-surface-container-high">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl">receipt_long</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-black uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Verified
+                    </div>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">GST Filings</h3>
+<p class="text-sm text-zinc-500 mb-8 leading-relaxed">Submit the last 12 months of GSTR-3B filings for verification of revenue consistency and tax compliance.</p>
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-mono text-zinc-400">GST_DATA_Q1_Q4_FINAL.PDF</span>
+<button class="text-primary hover:underline text-xs font-bold uppercase tracking-widest">Replace</button>
+</div>
+</div>
+<!-- Upload Card 2 (Uploaded) -->
+<div class="group relative bg-surface-container-low p-8 rounded-xl border-l-4 border-primary transition-all duration-300 hover:bg-surface-container-high">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-black uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Verified
+                    </div>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">Bank Statements</h3>
+<p class="text-sm text-zinc-500 mb-8 leading-relaxed">Integrated e-statements from primary business accounts. Necessary for cash-flow pattern recognition.</p>
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-mono text-zinc-400">HDFC_CORP_MAIN_STATEMENT.XLSX</span>
+<button class="text-primary hover:underline text-xs font-bold uppercase tracking-widest">Replace</button>
+</div>
+</div>
+<!-- Upload Card 3 (Pending) -->
+<div class="group relative bg-surface-container-low p-8 rounded-xl border-l-4 border-zinc-800 transition-all duration-300 hover:bg-surface-container-high border-dashed">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 rounded-lg bg-zinc-800 text-zinc-500">
+<span class="material-symbols-outlined text-3xl">description</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-tighter">
+                        Required
+                    </div>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">Annual Report</h3>
+<p class="text-sm text-zinc-500 mb-8 leading-relaxed">Audited financial statements including Balance Sheet and P&amp;L for the preceding financial year.</p>
+<button class="w-full py-4 rounded-xl border border-primary/30 text-primary hover:bg-primary/5 transition-all text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">upload_file</span>
+                    Upload Report
+                </button>
+</div>
+<!-- Upload Card 4 (Pending) -->
+<div class="group relative bg-surface-container-low p-8 rounded-xl border-l-4 border-zinc-800 transition-all duration-300 hover:bg-surface-container-high border-dashed">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 rounded-lg bg-zinc-800 text-zinc-500">
+<span class="material-symbols-outlined text-3xl">history_edu</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-tighter">
+                        Required
+                    </div>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">ITR Acknowledgement</h3>
+<p class="text-sm text-zinc-500 mb-8 leading-relaxed">Income Tax Return acknowledgements (ITR-V) for the last 2 assessment years to verify official income.</p>
+<button class="w-full py-4 rounded-xl border border-primary/30 text-primary hover:bg-primary/5 transition-all text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">upload_file</span>
+                    Upload ITR
+                </button>
+</div>
+</section>
+<!-- Footer Call to Action (Glass Widget) -->
+<div class="max-w-6xl mx-auto flex justify-center">
+<div class="glass-panel p-10 rounded-2xl w-full flex flex-col md:flex-row items-center justify-between gap-8 border border-outline-variant/10">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-4xl">shutter_speed</span>
+</div>
+<div>
+<h4 class="text-2xl font-headline font-bold text-on-surface tracking-tight">Ready for Acceleration?</h4>
+<p class="text-zinc-400">Once all 4 documents are verified, the AI engine can produce a report in &lt; 180s.</p>
+</div>
+</div>
+<button class="px-10 py-5 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-black uppercase tracking-widest text-sm shadow-[0_10px_40px_rgba(133,241,202,0.2)] hover:shadow-[0_15px_50px_rgba(133,241,202,0.4)] hover:-translate-y-1 transition-all">
+                    Initiate Final Scan
+                </button>
+</div>
+</div>
+</main>
+<!-- Site Footer -->
+<footer class="w-full py-12 bg-[#0e0e0e] mt-auto">
+<div class="max-w-7xl mx-auto px-8 flex justify-between items-center font-['Manrope'] text-[10px] uppercase tracking-[0.1em]">
+<span class="text-[#85f1ca] font-bold">KINETIC VAULT</span>
+<div class="flex gap-8 text-zinc-600">
+<a class="hover:text-[#85f1ca] transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-[#85f1ca] transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-[#85f1ca] transition-colors" href="#">Security</a>
+</div>
+<p class="text-zinc-600">© 2024 KINETIC VAULT. ALL RIGHTS RESERVED.</p>
+</div>
+</footer>
+</body></html>

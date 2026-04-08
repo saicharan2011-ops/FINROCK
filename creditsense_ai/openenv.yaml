@@ -1,0 +1,50 @@
+name: "CreditAppraisalEnv-v1"
+version: "1.0.0"
+description: >
+  An autonomous RL environment for Indian corporate lending appraisal. The agent must navigate a
+  Partially Observable Markov Decision Process (POMDP) to collect documents (GST, ITR, Bank Statements),
+  investigate risks (Circular trading, litigation), and issue a final credit recommendation.
+
+reward_range: [-1.0, 1.0]
+
+action_space:
+  type: "Discrete"
+  n: 14
+
+observation_space:
+  type: "Dict"
+  spaces:
+    financial_ratios:
+      type: "Box"
+      shape: [3]
+      dtype: "float32"
+      description: "Float array representing [Debt-to-Equity (D/E), Debt Service Coverage Ratio (DSCR), Current Ratio]"
+    
+    doc_status:
+      type: "MultiBinary"
+      n: 5
+      description: "Array of binary indicators denoting the collection status of the 5 key document types"
+    
+    risk_scores:
+      type: "Box"
+      shape: [3]
+      dtype: "float32"
+      description: "Continuous risk assessment scores for [litigation, promoter news, circular trading]"
+    
+    agent_step_count:
+      type: "Discrete"
+      n: 501
+      description: "Integer tracking the number of actions taken in the current episode"
+
+tasks:
+  - id: "1"
+    name: "Ratio Extraction & Validation"
+    description: "The agent must acquire appropriate financial documents to extract and validate D/E, DSCR, and Current Ratio."
+    
+  - id: "2"
+    name: "Anomalous Pattern Detection"
+    description: "The agent must run investigative checks to identify potential fraud vectors including circular trading, litigation, and negative promoter history."
+    
+  - id: "3"
+    name: "Full CAM Generation & Decision"
+    description: "The agent synthesizes financial metrics and risk flags into a final Credit Appraisal Memo (CAM), concluding with an optimal recommendation (Approve/Reject/Partial) to maximize reward."

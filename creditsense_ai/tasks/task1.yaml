@@ -1,0 +1,12 @@
+goal: Test basic financial ratio extraction.
+company_name: Vertex Manufacturing Pvt Ltd
+loan_amount: 5000000
+available_documents:
+  - gst_returns_2025
+  - bank_statement_2025
+ground_truth_label: APPROVE
+max_steps: 5
+planted_anomalies: []
+expected_ratios:
+  dscr: 1.8
+  current_ratio: 1.5

@@ -1,0 +1,142 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "loanId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "entryType",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "AuditLogged",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_loanId",
+        "type": "string"
+      }
+    ],
+    "name": "getAuditTrail",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "loanId",
+            "type": "string"
+          },
+          {
+            "internalType": "enum CreditAuditTrail.EntryType",
+            "name": "entryType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "dataHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "actionCode",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct CreditAuditTrail.AuditEntry[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_loanId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_actionCode",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_stateHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "logAction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_loanId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_decision",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_camHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "logDecision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_loanId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_docType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_docHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "logDocument",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

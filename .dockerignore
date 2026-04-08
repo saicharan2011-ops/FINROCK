@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.env
+creditsense-frontend/node_modules/
+creditsense-frontend/dist/
+creditsense-frontend/.vite/
+archive/
+tests/
