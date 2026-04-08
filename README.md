@@ -430,7 +430,7 @@ Day 3  ─── Solidity deploy + web3_logger + pdf_parser + research_agent
 Day 4  ─── openenv.yaml + api.py + first full integration test
 Day 5  ─── inference.py complete + reproducibility verified (5 runs)
 Day 6  ─── Dockerfile + HuggingFace deploy + Streamlit UI complete
-Day 7  ─── Demo rehearsal + final submission checklist
+Day 7  ─── Demo rehearsal
 ```
 
 ---
@@ -445,36 +445,6 @@ Day 7  ─── Demo rehearsal + final submission checklist
 | **Teammate 2** | Parsers + UI | `pdf_parser.py`, `bank_parser.py`, `gst_itr_parser.py`, `circular_trading.py`, `research_agent.py`, `cam_generator.py`, `streamlit_app.py`, test data |
 
 </div>
-
----
-
-## 🏆 Hackathon Context
-
-<div align="center">
-
-**Meta × PyTorch OpenEnv Hackathon 2026 — Organised by Scaler School of Technology**
-
-| | |
-|---|---|
-| Prize Pool | $30,000 |
-| Top Prize | Interview opportunity at Meta & Hugging Face AI teams |
-| Round 1 Deadline | 8th April 2026 |
-| Grand Finale | 25–26 April 2026, Bangalore |
-| Sponsors | Meta, PyTorch, Hugging Face |
-
-*Built on OpenEnv — the open-source framework by Meta & Hugging Face for standardized, reusable AI agent environments.*
-
-</div>
-
----
-
-## 📞 The Three-Sentence Pitch
-
-> *"CreditSense AI is an autonomous credit appraisal agent that reads everything a senior credit manager reads — GST filings, court records, bank statements, promoter news — and produces a complete Credit Appraisal Memo in 40 seconds, not 3 weeks.*
->
-> *It is built on reinforcement learning where the agent requests documents sequentially under uncertainty, exactly like a real credit manager working through a loan file.*
->
-> *And every single decision it makes is permanently written to the Polygon blockchain — so when RBI asks 'show us exactly why you approved this loan,' you can answer with a cryptographic audit trail that cannot be forged, deleted, or contested."*
 
 ---
 
