@@ -1,20 +1,45 @@
----
-title: CreditSense AI
-emoji: 🧾
-colorFrom: green
-colorTo: gray
-sdk: docker
-app_port: 8501
-pinned: false
----
+<div align="center">
+<!-- ANIMATED HEADER -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=7F77DD&height=200&section=header&text=CreditSense%20AI&fontSize=60&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Autonomous%20Credit%20Appraisal%20for%20Indian%20Corporate%20Lending&descAlignY=60&descColor=5DCAA5" width="100%"/>
+<!-- BADGES ROW 1 -->
+<p>
+  <img src="https://img.shields.io/badge/Meta%20×%20PyTorch-OpenEnv%20Hackathon-7F77DD?style=for-the-badge&logo=meta&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Hugging%20Face-Spaces%20Deployed-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Polygon-Amoy%20Testnet-8247E5?style=for-the-badge&logo=polygon&logoColor=white"/>
+</p>
+<!-- BADGES ROW 2 -->
+<p>
+  <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/RL%20Framework-Gymnasium-FF6B35?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/LLM-Groq%20%2B%20Llama%203.1-00A3E0?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Cost-₹0%20Spent-5DCAA5?style=for-the-badge"/>
+</p>
+<!-- ANIMATED TYPING -->
+<br/>
+╔══════════════════════════════════════════════════════════════╗
+║  3 weeks of analyst work  →  40 seconds with CreditSense AI ║
+║  ₹3–5 lakh per appraisal  →  ₹800 per appraisal             ║
+║  Word doc audit trail     →  Blockchain-verified forever     ║
+╚══════════════════════════════════════════════════════════════╝
+<br/>
+Built for the Meta × PyTorch OpenEnv Hackathon 2026 — India's Biggest AI Hackathon | $30,000 Prize Pool
+🚀 Live Demo • 📄 OpenEnv Spec • 🔗 Blockchain Audit • 📊 Inference Script
+</div>
 
-## CreditSense AI (Hackathon Finals Build)
+🧠 What Is CreditSense AI?
 
-**Problem:** Manual credit appraisal in India still runs on fragmented documents and a 3-week turnaround time—with major blind spots for sophisticated frauds like circular trading. Banks also lack an immutable audit trail when AI is involved in the decision loop.
+Indian banks lose ₹32,000 crore a year to advance-related fraud. Not because they lack data — but because no system reads all of it together.
 
-**Solution:** **CreditSense AI** is an autonomous credit research + appraisal pipeline that converts multi-format evidence (GST, bank statements, filings) into a judge-ready **CAM** in ~40 seconds. Using **TurboQuant** for memory‑optimal reasoning and a **Polygon (Amoy) “Glass Box” audit trail**, every critical step can be reconstructed and verified.
+CreditSense AI is an autonomous credit appraisal agent built as a POMDP-based Reinforcement Learning environment (CreditAppraisalEnv-v1). It works exactly like a senior credit manager:
 
----
+Sees partial information at the start (just a company name)
+Decides which documents to request next — sequentially, under uncertainty
+Investigates suspicious signals automatically (circular trading, shell networks, fake invoices)
+Searches court records across 700+ Indian courts without any manual upload
+Produces a complete Credit Appraisal Memo with an explainable recommendation
+Writes every single decision permanently to the Polygon blockchain
+
+This is not a batch processor. It is an agent that thinks.
 
 ## What judges should try (2 minutes)
 
@@ -25,7 +50,7 @@ pinned: false
 
 Backend docs are available at `/:8000/docs`.
 
----
+---──┘
 
 ## Architecture (production demo)
 
@@ -142,3 +167,9 @@ docker run --env-file .env -p 8000:8000 -p 8501:8501 creditsense
    - `HF_TOKEN`, `API_BASE_URL`, `MODEL_NAME`
    - `PRIVATE_KEY`, `CONTRACT_ADDRESS`, `RPC_URL`
 4. Wait for build → your live demo is ready.
+
+<div align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=5DCAA5&height=120&section=footer&animation=fadeIn" width="100%"/>
+CreditSense AI — Built with ❤️ for India's banking system
+Meta × PyTorch OpenEnv Hackathon 2026
+</div>
