@@ -1,12 +1,4 @@
----
-title: FINROCK AI
-emoji: 🏦
-colorFrom: indigo
-colorTo: green
-sdk: docker
-app_port: 8501
-pinned: false
----
+
 
 <div align="center">
 
