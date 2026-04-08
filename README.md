@@ -1,3 +1,13 @@
+---
+title: FINROCK AI
+emoji: 🏦
+colorFrom: indigo
+colorTo: emerald
+sdk: docker
+app_port: 8501
+pinned: false
+---
+
 <div align="center">
 
 <!-- ANIMATED HEADER -->
@@ -33,7 +43,7 @@
 
 **Built for the Meta × PyTorch OpenEnv Hackathon 2026 — India's Biggest AI Hackathon | $30,000 Prize Pool**
 
-[🚀 Live Demo](https://huggingface.co/spaces/) • [📄 OpenEnv Spec](./openenv.yaml) • [🔗 Blockchain Audit](https://amoy.polygonscan.com/) • [📊 Inference Script](./inference.py)
+[🚀 Live Demo](https://huggingface.co/spaces/saicharan1907/FINROCK) • [📄 OpenEnv Spec](./openenv.yaml) • [🔗 Blockchain Audit](https://amoy.polygonscan.com/) • [📊 Inference Script](./inference.py)
 
 </div>
 
@@ -285,8 +295,8 @@ tasks:
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-username/CreditSense-AI.git
-cd CreditSense-AI
+git clone https://github.com/saicharan2011-ops/FINROCK.git
+cd FINROCK
 
 # 2. Install dependencies
 pip install -r requirements.txt
