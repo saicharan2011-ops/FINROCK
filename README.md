@@ -2,7 +2,7 @@
 title: FINROCK AI
 emoji: 🏦
 colorFrom: indigo
-colorTo: emerald
+colorTo: green
 sdk: docker
 app_port: 8501
 pinned: false
