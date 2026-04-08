@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finrock"
+version = "1.0.0"
+description = "FINROCK / CreditSense AI submission package"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "saicharan1907" }
+]
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "python-multipart",
+  "openai",
+  "requests",
+  "websockets",
+  "pydantic",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["creditsense_ai*"]
+
