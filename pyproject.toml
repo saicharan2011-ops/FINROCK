@@ -16,10 +16,14 @@ dependencies = [
   "uvicorn[standard]",
   "python-multipart",
   "openai",
+  "openenv-core>=0.2.0",
   "requests",
   "websockets",
   "pydantic",
 ]
+
+[project.scripts]
+server = "server.app:main"
 
 [tool.setuptools]
 include-package-data = true
