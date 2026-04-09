@@ -13,9 +13,9 @@ load_dotenv()
 from creditsense_ai.env.CreditAppraisalEnv import CreditAppraisalEnv
 from creditsense_ai.env.actions import AppraisalAction
 
-HF_TOKEN = os.environ["HF_TOKEN"]
-API_BASE_URL = os.environ["API_BASE_URL"]
-MODEL_NAME = os.environ["MODEL_NAME"]
+HF_TOKEN = os.environ.get("HF_TOKEN", "dummy_token")
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://api.openai.com/v1")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gpt-4o")
 
 client = OpenAI(
     api_key=HF_TOKEN,
@@ -88,8 +88,12 @@ def main():
     task_file = f"creditsense_ai/tasks/{args.task}.yaml"
     task_config = {}
     if os.path.exists(task_file):
-        with open(task_file, "r") as f:
-            task_config = yaml.safe_load(f)
+        try:
+            with open(task_file, "r") as f:
+                task_config = yaml.safe_load(f)
+        except Exception as e:
+            sys.stderr.write(f"ERROR: Failed to parse task config {task_file}: {e}\n")
+            sys.exit(1)
     else:
         sys.stderr.write(f"ERROR: Task config file {task_file} not found.\n")
         sys.exit(1)
