@@ -22,9 +22,18 @@ client = OpenAI(
     base_url=API_BASE_URL
 )
 
-def log_event(tag: str, data: dict):
-    line = json.dumps({"tag": tag, **data})
-    print(f"[{tag}] {line}", flush=True)
+def log_start(task: str, env: str, model: str):
+    print(f"[START] task={task} env={env} model={model}", flush=True)
+
+def log_step(step: int, action: str, reward: float, done: bool, error: str = None):
+    error_val = error if error is not None else "null"
+    done_val = str(done).lower()
+    print(f"[STEP] step={step} action={action} reward={reward:.2f} done={done_val} error={error_val}", flush=True)
+
+def log_end(success: bool, steps: int, score: float, rewards: list):
+    rewards_str = ",".join(f"{r:.2f}" for r in rewards)
+    success_val = str(success).lower()
+    print(f"[END] success={success_val} steps={steps} score={score:.2f} rewards={rewards_str}", flush=True)
 
 def greedy_agent(obs, state):
     ratios = state.financial_ratios
@@ -101,16 +110,13 @@ def main():
     env = CreditAppraisalEnv(task_config)
     obs, info = env.reset()
 
-    log_event("START", {
-        "task": args.task,
-        "seed": args.seed,
-        "model": MODEL_NAME
-    })
+    log_start(task=args.task, env="CreditAppraisalEnv-v1", model=MODEL_NAME)
 
     done = False
     step_num = 0
     total_reward = 0.0
     action = 0
+    rewards_list = []
 
     while not done:
         action = greedy_agent(obs, env.get_state())
@@ -118,6 +124,7 @@ def main():
         obs, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
         total_reward += reward
+        rewards_list.append(reward)
         step_num += 1
 
         try:
@@ -125,14 +132,7 @@ def main():
         except ValueError:
             action_name = f"UNKNOWN_{action}"
 
-        log_event("STEP", {
-            "step": step_num,
-            "action": int(action),
-            "action_name": action_name,
-            "reward": round(reward, 4),
-            "done": done,
-            "info": {k: str(v) for k, v in info.items()}
-        })
+        log_step(step=step_num, action=action_name, reward=reward, done=done, error=None)
 
         if step_num >= 50:
              sys.stderr.write("DEBUG Auto truncating after 50 steps\n")
@@ -147,12 +147,11 @@ def main():
     elif hasattr(env.get_state(), 'last_recommendation') and env.get_state().last_recommendation:
          final_decision = env.get_state().last_recommendation
 
-    log_event("END", {
-        "task": args.task,
-        "total_steps": step_num,
-        "total_reward": round(total_reward, 4),
-        "final_recommendation": final_decision
-    })
+    # Assume max possible reward per step is 1.0, max steps 50 -> 50.0 total
+    score = min(max(total_reward / 50.0, 0.0), 1.0)
+    success = score > 0.0
+
+    log_end(success=success, steps=step_num, score=score, rewards=rewards_list)
 
 if __name__ == "__main__":
     main()
