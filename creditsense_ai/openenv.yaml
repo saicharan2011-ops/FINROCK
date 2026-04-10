@@ -40,11 +40,20 @@ tasks:
   - id: "1"
     name: "Ratio Extraction & Validation"
     description: "The agent must acquire appropriate financial documents to extract and validate D/E, DSCR, and Current Ratio."
+    grader:
+      type: "reward_threshold"
+      threshold: 0.8
     
   - id: "2"
     name: "Anomalous Pattern Detection"
     description: "The agent must run investigative checks to identify potential fraud vectors including circular trading, litigation, and negative promoter history."
+    grader:
+      type: "reward_threshold"
+      threshold: 0.8
     
   - id: "3"
     name: "Full CAM Generation & Decision"
     description: "The agent synthesizes financial metrics and risk flags into a final Credit Appraisal Memo (CAM), concluding with an optimal recommendation (Approve/Reject/Partial) to maximize reward."
+    grader:
+      type: "reward_threshold"
+      threshold: 0.8

@@ -21,23 +21,32 @@ spaces:
 reward_range: [-1.5, 2.0]
 
 tasks:
-  task_1:
+  - id: task1
     name: Ratio Extraction & Validation
     difficulty: Easy
     max_steps: 10
     success_threshold: 0.8
     description: Extract and cross-validate 5 key financial ratios from GST and Bank statements.
+    grader:
+      type: reward_threshold
+      threshold: 0.8
     
-  task_2:
+  - id: task2
     name: Anomalous Pattern Detection
     difficulty: Medium
     max_steps: 15
     success_threshold: 0.85
     description: Detect hidden circular trading patterns and revenue mismatches using graph-based analysis.
+    grader:
+      type: reward_threshold
+      threshold: 0.85
     
-  task_3:
+  - id: task3
     name: Full CAM Generation & Decision
     difficulty: Hard
     max_steps: 20
     success_threshold: 0.9
     description: End-to-end appraisal including site-visit synthesis and final recommendation logged to blockchain.
+    grader:
+      type: reward_threshold
+      threshold: 0.9
