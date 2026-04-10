@@ -84,9 +84,17 @@ Return ONLY a single integer. No explanation."""},
         
     return action
 
+def get_task_name() -> str:
+    # Try various environment variables platforms might use
+    for env_var in ["TASK_NAME", "MY_ENV_V4_TASK", "TASK_ID", "TASK_INSTANCE_ID", "CREDITSENSE_TASK"]:
+        val = os.environ.get(env_var)
+        if val:
+            return val
+    return "task1"
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task",  default="task1", help="Name of the task YAML inside tasks/")
+    parser.add_argument("--task",  default=get_task_name(), help="Name of the task YAML inside tasks/")
     parser.add_argument("--seed",  type=int, default=42, help="Random seed for reproducibility")
     args = parser.parse_args()
 
@@ -148,8 +156,8 @@ def main():
          final_decision = env.get_state().last_recommendation
 
     # Assume max possible reward per step is 1.0, max steps 50 -> 50.0 total
-    score = min(max(total_reward / 50.0, 0.0), 1.0)
-    success = score > 0.0
+    score = min(max(total_reward / 50.0, 0.01), 0.99)
+    success = score > 0.5
 
     log_end(success=success, steps=step_num, score=score, rewards=rewards_list)
 
