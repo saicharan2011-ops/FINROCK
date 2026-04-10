@@ -10,6 +10,6 @@ planted_anomalies: []
 expected_ratios:
   dscr: 1.8
   current_ratio: 1.5
-grader:
-  type: "reward_threshold"
-  threshold: 0.8
+graders:
+  - type: "reward_threshold"
+    threshold: 0.8
