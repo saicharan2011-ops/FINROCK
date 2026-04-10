@@ -19,3 +19,6 @@ scoring_weights:
   sector_headwind_flagged: 0.15
   promoter_risk_flagged: 0.20
   revenue_mismatch_flagged: 0.15
+grader:
+  type: "reward_threshold"
+  threshold: 0.9
