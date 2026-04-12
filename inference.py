@@ -35,7 +35,7 @@ Financial Ratios: DSCR={ratios.dscr}, D/E={ratios.de_ratio}, Current Ratio={rati
 Document Status: GST={docs.gst}, ITR={docs.itr}, Bank={docs.bank_stmt}, Annual_Report={docs.annual_report}, MCA={docs.mca}
 Risk Flags: Litigation={risks.litigation_risk}, Promoter={risks.promoter_risk}, Circular={risks.circular_trading_flag}, Tamper={risks.tamper_detected}
 """
-    max_action = 11 # 0-11 per new openenv.yaml
+    max_action = 13 # 0-13 per AppraisalAction enum
     prompt = f"Given observation {obs.tolist()} and the following state summary:\n{state_summary}\nSelect the best action integer (0-{max_action})."
     
     try:
@@ -46,9 +46,10 @@ Risk Flags: Litigation={risks.litigation_risk}, Promoter={risks.promoter_risk}, 
 You must follow this decision order:
 1. First collect all available documents (actions 0-4)
 2. Then run fraud and risk checks (actions 5-8)
-3. Only then make a recommendation (action 11)
+3. Only then make a recommendation (actions 11-13)
 Rules: Never request a document you already have. Never recommend before collecting
 at least 2 documents. Always run circular trading check if GST is loaded.
+Action 11 = APPROVE, 12 = REJECT, 13 = PARTIAL.
 Return ONLY a single integer. No explanation."""},
                 {"role": "user",   "content": prompt}
             ],
@@ -65,12 +66,25 @@ Return ONLY a single integer. No explanation."""},
 def run_task(task_id: str) -> float:
     """Run one episode and return the graded score 0.0–1.0."""
     try:
+        # 1. Start block - Ensure exact format required by validator
+        print(f"[START] task={task_id}", flush=True)
+
+        # Map task IDs to file names if necessary
+        task_map = {
+            "task_easy": "task1",
+            "task_medium": "task2",
+            "task_hard": "task3"
+        }
+        file_id = task_map.get(task_id, task_id)
+        
         # Load task config
-        task_file = f"creditsense_ai/tasks/{task_id}.yaml"
+        task_file = f"creditsense_ai/tasks/{file_id}.yaml"
         task_config = {}
         if os.path.exists(task_file):
             with open(task_file, "r") as f:
                 task_config = yaml.safe_load(f)
+        else:
+            print(f"Warning: Task file {task_file} not found, using empty config", file=sys.stderr)
         
         env = CreditAppraisalEnv(task_config)
         obs, _ = env.reset(seed=42)
@@ -80,17 +94,31 @@ def run_task(task_id: str) -> float:
         
         while not done and step_num < 15:
             action = greedy_agent(obs, env.get_state())
-            obs, _, terminated, truncated, _ = env.step(action)
+            obs, reward, terminated, truncated, _ = env.step(action)
+            
+            # 2. Step block - Ensure exact format required by validator
+            # Round reward to 4 decimal places for consistency
+            print(f"[STEP] step={step_num} reward={round(float(reward), 4)}", flush=True)
+
             done = terminated or truncated
             step_num += 1
             
         # Grade the result
-        state_dict = env.get_state().model_dump() if hasattr(env.get_state(), "model_dump") else {}
-        # For task_hard, we'd ideally have cam_text, but we'll use empty for now or 
-        # assume the grader handles it.
-        return grade_task(task_id, state_dict)
+        state = env.get_state()
+        state_dict = state.model_dump() if hasattr(state, "model_dump") else {}
+        score = grade_task(task_id, state_dict)
+
+        # 3. End block - Ensure exact format required by validator
+        print(f"[END] task={task_id} score={round(float(score), 4)} steps={step_num}", flush=True)
+
+        return float(score)
     except Exception as e:
-        print(f"[ERROR] task {task_id}: {e}", file=sys.stderr)
+        # Use stderr for errors so they don't mess up stdout parsing
+        import traceback
+        print(f"Error in task {task_id}: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)
+        # We still need to print END even on error, or validator might hang
+        print(f"[END] task={task_id} score=0.0 steps=0", flush=True)
         return 0.0
 
 if __name__ == "__main__":
@@ -109,4 +137,4 @@ if __name__ == "__main__":
         ],
         "average_score": round(sum(results.values()) / 3, 4),
         "environment": "CreditSenseAI-v1",
-    }, indent=2))
+    }, indent=2), flush=True)
