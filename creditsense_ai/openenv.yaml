@@ -1,59 +1,148 @@
-name: "CreditAppraisalEnv-v1"
+name: CreditSenseAI-v1
 version: "1.0.0"
 description: >
-  An autonomous RL environment for Indian corporate lending appraisal. The agent must navigate a
-  Partially Observable Markov Decision Process (POMDP) to collect documents (GST, ITR, Bank Statements),
-  investigate risks (Circular trading, litigation), and issue a final credit recommendation.
+  An RL environment for autonomous credit appraisal of Indian corporate 
+  loan applications. The agent ingests multi-format financial documents, 
+  performs secondary research, detects fraud patterns, and produces an 
+  explainable Credit Appraisal Memo (CAM) with a lending recommendation.
+
+observation_space:
+  type: dict
+  fields:
+    doc_completeness:
+      type: float
+      description: Fraction of required documents collected (0.0–1.0)
+    financial_ratios:
+      type: dict
+      description: Computed ratios — de_ratio, dscr, current_ratio, interest_coverage, operating_margin
+    risk_flags:
+      type: dict
+      description: Detected risks — circular_trading, litigation, promoter_risk, sector_headwind
+    research_done:
+      type: bool
+      description: Whether secondary research agent has been run
+    primary_insight_score:
+      type: float
+      description: Qualitative score from site visit / management interview (0.0–1.0)
+    step_count:
+      type: int
+      description: Number of actions taken in current episode
+    recommendation:
+      type: string
+      description: Current lending recommendation — approve / reject / partial / pending
+
+action_space:
+  type: discrete
+  n: 12
+  actions:
+    - id: 0
+      name: request_gst
+      description: Request and parse GST filing XML
+    - id: 1
+      name: request_itr
+      description: Request and parse ITR JSON
+    - id: 2
+      name: request_bank_stmt
+      description: Request and parse bank statement CSV
+    - id: 3
+      name: request_annual_report
+      description: Request and parse annual report PDF
+    - id: 4
+      name: request_mca_filing
+      description: Request MCA corporate filing data
+    - id: 5
+      name: run_circular_trading_check
+      description: Analyse GST invoice graph for circular trading cycles
+    - id: 6
+      name: run_litigation_search
+      description: Search e-courts and legal databases for disputes
+    - id: 7
+      name: run_promoter_news_search
+      description: Search news for promoter background and reputation
+    - id: 8
+      name: run_sector_research
+      description: Research sector headwinds and regulatory changes
+    - id: 9
+      name: input_site_visit_notes
+      description: Enter qualitative observations from factory site visit
+    - id: 10
+      name: input_mgmt_interview
+      description: Enter qualitative observations from management interview
+    - id: 11
+      name: recommend
+      description: Submit final lending recommendation — terminal action
 
 reward_range: [-1.0, 1.0]
 
-action_space:
-  type: "Discrete"
-  n: 14
-
-observation_space:
-  type: "Dict"
-  spaces:
-    financial_ratios:
-      type: "Box"
-      shape: [3]
-      dtype: "float32"
-      description: "Float array representing [Debt-to-Equity (D/E), Debt Service Coverage Ratio (DSCR), Current Ratio]"
-    
-    doc_status:
-      type: "MultiBinary"
-      n: 5
-      description: "Array of binary indicators denoting the collection status of the 5 key document types"
-    
-    risk_scores:
-      type: "Box"
-      shape: [3]
-      dtype: "float32"
-      description: "Continuous risk assessment scores for [litigation, promoter news, circular trading]"
-    
-    agent_step_count:
-      type: "Discrete"
-      n: 501
-      description: "Integer tracking the number of actions taken in the current episode"
-
 tasks:
-  - id: "1"
-    name: "Ratio Extraction & Validation"
-    description: "The agent must acquire appropriate financial documents to extract and validate D/E, DSCR, and Current Ratio."
-    graders:
-      - type: "reward_threshold"
-        threshold: 0.8
-    
-  - id: "2"
-    name: "Anomalous Pattern Detection"
-    description: "The agent must run investigative checks to identify potential fraud vectors including circular trading, litigation, and negative promoter history."
-    graders:
-      - type: "reward_threshold"
-        threshold: 0.8
-    
-  - id: "3"
-    name: "Full CAM Generation & Decision"
-    description: "The agent synthesizes financial metrics and risk flags into a final Credit Appraisal Memo (CAM), concluding with an optimal recommendation (Approve/Reject/Partial) to maximize reward."
-    graders:
-      - type: "reward_threshold"
-        threshold: 0.8
+  - id: task_easy
+    name: Financial Ratio Extraction
+    difficulty: easy
+    description: >
+      Given a synthetic company's GST filings and bank statements, 
+      the agent must collect the required documents and compute the 
+      five key financial ratios correctly within ±5% tolerance.
+    max_steps: 8
+    grader:
+      type: ratio_accuracy
+      metric: correct_ratios_out_of_5
+      scoring:
+        perfect: 1.0
+        four_correct: 0.8
+        three_correct: 0.6
+        two_correct: 0.4
+        one_correct: 0.2
+        none_correct: 0.0
+      partial_credit: true
+
+  - id: task_medium
+    name: Circular Trading Detection
+    difficulty: medium
+    description: >
+      A planted GST invoice cycle (A→B→C→A) inflates the company's 
+      declared revenue by 30%. The agent must detect the circular 
+      trading pattern and flag it before making a recommendation.
+    max_steps: 10
+    grader:
+      type: fraud_detection
+      metric: circular_trading_detected
+      scoring:
+        detected_and_correct_decision: 1.0
+        detected_wrong_decision: 0.5
+        not_detected_correct_decision: 0.2
+        not_detected_wrong_decision: 0.0
+      partial_credit: true
+
+  - id: task_hard
+    name: Full CAM with Multi-Signal Decision
+    difficulty: hard
+    description: >
+      A complete loan case with circular trading, active litigation, 
+      and a planted primary insight (factory at 40% capacity). The 
+      agent must integrate all signals and produce an explainable 
+      Credit Appraisal Memo with the correct lending recommendation.
+    max_steps: 15
+    grader:
+      type: llm_judge
+      metric: cam_quality_and_decision_accuracy
+      rubric:
+        - criterion: character_section
+          weight: 0.15
+          description: CAM covers promoter background and litigation history
+        - criterion: capacity_section
+          weight: 0.20
+          description: CAM covers DSCR, revenue trend, operating margin
+        - criterion: capital_section
+          weight: 0.15
+          description: CAM covers debt-to-equity ratio and net worth
+        - criterion: collateral_section
+          weight: 0.10
+          description: CAM covers collateral value from primary insights
+        - criterion: conditions_section
+          weight: 0.15
+          description: CAM covers sector headwinds and regulatory environment
+        - criterion: correct_decision
+          weight: 0.25
+          description: Final approve/reject/partial matches ground truth label
+      scoring_range: [0.0, 1.0]
+      partial_credit: true

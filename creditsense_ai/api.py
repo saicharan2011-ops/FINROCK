@@ -14,7 +14,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from creditsense_ai.logging_utils import emit_stdout_event
-from credit_env import OpenEnvAdapter
+from credit_env import OpenEnvAdapter, TASKS
 
 # Lazy imports — these may fail if optional deps are missing.
 # We import them inside the functions that use them so the server always boots.
@@ -170,6 +170,16 @@ async def root():
     if index.exists():
         return FileResponse(index)
     return {"message": "CreditSense AI Backend Operational", "status": "online"}
+
+
+@app.get("/tasks")
+async def list_tasks():
+    return {"tasks": TASKS}
+
+
+@app.get("/openenv/tasks")
+async def list_tasks_alias():
+    return {"tasks": TASKS}
 
 
 @app.post("/reset")
