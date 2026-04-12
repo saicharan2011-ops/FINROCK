@@ -93,7 +93,7 @@ This is not a batch processor. It is an agent that thinks.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    FINROCKEnv-v1                        │
+│                    CreditSenseAI-v1                     │
 │                   (POMDP — Partially Observable)                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
@@ -111,18 +111,17 @@ This is not a batch processor. It is an agent that thinks.
 │   │ [0.0–1.0]    │                                             │
 │   └──────────────┘                                             │
 │                                                                 │
-│   ACTION SPACE (15 discrete actions)                            │
+│   ACTION SPACE (12 discrete actions)                            │
 │   ┌─────────────────────────────────────────────────────┐       │
 │   │ COLLECT: request_gst, request_itr, request_bank,    │       │
 │   │          request_annual_report, request_mca         │       │
 │   │                                                     │       │
-│   │ INVESTIGATE: circular_trading_check, litigation_    │       │
-│   │   search, promoter_search, shell_network_check,     │       │
-│   │   beneish_mscore, invoice_fraud_check               │       │
+│   │ INVESTIGATE: run_circular_trading_check, litigation_ │       │
+│   │   search, promoter_search, sector_research          │       │
 │   │                                                     │       │
 │   │ QUALIFY: site_visit_notes, mgmt_interview           │       │
 │   │                                                     │       │
-│   │ TERMINAL: approve, reject, partial                  │       │
+│   │ TERMINAL: recommend                                 │       │
 │   └─────────────────────────────────────────────────────┘       │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
