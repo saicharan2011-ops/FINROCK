@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any, Dict
 
 import numpy as np
@@ -63,26 +64,31 @@ TASKS = [
 ]
 
 
+def _clamp_score(score: float) -> float:
+    """Clamp score to (0, 1) — the OpenEnv validator rejects exactly 0.0 or 1.0."""
+    return round(max(0.01, min(0.99, score)), 4)
+
+
 def _grade_easy(state: dict) -> float:
     ratios = state.get("financial_ratios", {})
-    required = ["de_ratio", "dscr", "current_ratio", "interest_coverage", "operating_margin"]
+    required = ["de_ratio", "dscr", "current_ratio", "interest_coverage", "op_margin"]
     correct = sum(1 for r in required if ratios.get(r) is not None)
-    return round(correct / len(required), 2)
+    return _clamp_score(correct / len(required))
 
 
 def _grade_medium(state: dict) -> float:
-    flags = state.get("risk_flags", {})
+    flags = state.get("risk_signals", {})
     detected = flags.get("circular_trading_flag", 0.0) > 0.0
     recommendation = state.get("last_recommendation", "").upper()
     correct_decision = recommendation in ("REJECT", "PARTIAL")
 
     if detected and correct_decision:
-        return 1.0
+        return _clamp_score(1.0)
     elif detected and not correct_decision:
-        return 0.5
+        return _clamp_score(0.5)
     elif not detected and correct_decision:
-        return 0.2
-    return 0.0
+        return _clamp_score(0.2)
+    return _clamp_score(0.0)
 
 
 def _grade_hard(state: dict, cam_text: str = "") -> float:
@@ -102,11 +108,11 @@ def _grade_hard(state: dict, cam_text: str = "") -> float:
         if section in cam_lower:
             score += weight
 
-    # Correct terminal decision (ground truth for hard task = REJECT)
-    if recommendation == "REJECT":
+    # Correct terminal decision (ground truth for hard task = PARTIAL or REJECT)
+    if recommendation in ("REJECT", "PARTIAL"):
         score += 0.25
 
-    return round(min(score, 1.0), 2)
+    return _clamp_score(min(score, 1.0))
 
 
 def grade_task(task_id: str, state: dict, cam_text: str = "") -> float:
@@ -119,7 +125,7 @@ def grade_task(task_id: str, state: dict, cam_text: str = "") -> float:
         return _grade_medium(state)
     elif task_id == "task_hard":
         return _grade_hard(state, cam_text)
-    return 0.0
+    return _clamp_score(0.0)
 
 
 class OpenEnvAdapter:

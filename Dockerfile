@@ -1,11 +1,3 @@
-FROM node:20-alpine AS frontend-builder
-
-WORKDIR /web
-COPY creditsense-frontend/package*.json ./
-RUN npm ci
-COPY creditsense-frontend/ ./
-RUN npm run build
-
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -24,11 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY creditsense_ai/requirements.txt /app/creditsense_ai/requirements.txt
 RUN pip install --upgrade pip && pip install -r /app/creditsense_ai/requirements.txt
 
-# Copy application code
+# Copy ALL application code (inference.py, credit_env.py, creditsense_ai/, etc.)
 COPY . /app
-COPY --from=frontend-builder /web/dist /app/creditsense-frontend/dist
 
-EXPOSE 8501
-
-# FastAPI serves API + built React frontend on the same origin/port.
-CMD ["uvicorn", "creditsense_ai.api:app", "--host", "0.0.0.0", "--port", "8501"]
+# Default command: run inference.py for OpenEnv Phase-2 evaluation.
+# The evaluator expects [START]/[STEP]/[END] structured output on stdout.
+CMD ["python", "inference.py"]

@@ -14,8 +14,8 @@ observation_space:
       description: Fraction of required documents collected (0.0–1.0)
     financial_ratios:
       type: dict
-      description: Computed ratios — de_ratio, dscr, current_ratio, interest_coverage, operating_margin
-    risk_flags:
+      description: Computed ratios — de_ratio, dscr, current_ratio, interest_coverage, op_margin
+    risk_signals:
       type: dict
       description: Detected risks — circular_trading, litigation, promoter_risk, sector_headwind
     research_done:
@@ -33,7 +33,7 @@ observation_space:
 
 action_space:
   type: discrete
-  n: 12
+  n: 14
   actions:
     - id: 0
       name: request_gst
@@ -69,8 +69,14 @@ action_space:
       name: input_mgmt_interview
       description: Enter qualitative observations from management interview
     - id: 11
-      name: recommend
-      description: Submit final lending recommendation — terminal action
+      name: recommend_approve
+      description: Submit APPROVE lending recommendation — terminal action
+    - id: 12
+      name: recommend_reject
+      description: Submit REJECT lending recommendation — terminal action
+    - id: 13
+      name: recommend_partial
+      description: Submit PARTIAL lending recommendation — terminal action
 
 reward_range: [-1.0, 1.0]
 

@@ -294,6 +294,15 @@ class CreditAppraisalEnv(gym.Env):
                 )
 
             elif action_enum in [AppraisalAction.RECOMMEND_APPROVE, AppraisalAction.RECOMMEND_REJECT, AppraisalAction.RECOMMEND_PARTIAL]:
+                # Map action to recommendation string for grader
+                rec_label = {
+                    AppraisalAction.RECOMMEND_APPROVE: "APPROVE",
+                    AppraisalAction.RECOMMEND_REJECT: "REJECT",
+                    AppraisalAction.RECOMMEND_PARTIAL: "PARTIAL",
+                }[action_enum]
+                self.state = self.state.model_copy(
+                    update={"last_recommendation": rec_label}, deep=True
+                )
                 if hasattr(self.cam_generator, "generate"):
                     self.cam_generator.generate(self.state)
 

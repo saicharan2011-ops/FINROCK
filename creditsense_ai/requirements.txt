@@ -17,3 +17,4 @@ web3
 streamlit
 websockets
 python-docx
+pyyaml
